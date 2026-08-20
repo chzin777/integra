@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { flushSync } from "react-dom";
 import gsap from "gsap";
@@ -61,8 +62,12 @@ function Kinetic({ text, className }: { text: string; className?: string }) {
   );
 }
 
+// Seções observadas pelo grifo da navbar, na ordem em que aparecem.
+const SECOES = ["sobre", "servicos", "portfolio", "depoimentos", "contato"];
+
 export default function V2() {
   const [scrolled, setScrolled] = useState(false);
+  const [secao, setSecao] = useState("");
   const [claro, setClaro] = useState(true);
   const raiz = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
@@ -89,6 +94,24 @@ export default function V2() {
     }
 
     const ctx = gsap.context(() => {
+      // 0) Scrollspy: a seção em que o leitor está fica grifada na navbar.
+      // Um trigger só, decidindo pela última seção que já cruzou a linha de
+      // leitura — seções vizinhas se sobrepõem, e aí dois triggers brigariam.
+      const linha = () => innerHeight * 0.35;
+      const alvos = SECOES.map((id) => [id, document.querySelector<HTMLElement>(`#${id}`)] as const)
+        .filter((par): par is readonly [string, HTMLElement] => !!par[1]);
+      ScrollTrigger.create({
+        start: 0,
+        end: "max",
+        onUpdate: () => {
+          let atual = "";
+          for (const [id, el] of alvos) {
+            if (el.getBoundingClientRect().top <= linha()) atual = id;
+          }
+          setSecao(atual);
+        },
+      });
+
       // 1) Cortina de entrada.
       const introTl = gsap.timeline();
       if (!reduz) {
@@ -272,10 +295,19 @@ export default function V2() {
       <div className="v2intro" ref={introRef}><span>Íntegra</span></div>
 
       <nav className={`v2nav ${scrolled ? "v2nav--on" : ""}`}>
-        <button className="v2nav__marca" onClick={() => ir("#topo")}>Íntegra</button>
+        <button className="v2nav__marca" onClick={() => ir("#topo")} aria-label="Íntegra — voltar ao topo">
+          <Image src="/integra-logo.png" alt="" width={28} height={30} priority className="v2marca__simbolo" />
+          <Image src="/integra-nome.png" alt="Íntegra" width={894} height={144} priority className="v2marca__nome" />
+        </button>
         <div className="v2nav__links">
           {[["Sobre", "#sobre"], ["Serviços", "#servicos"], ["Portfólio", "#portfolio"], ["Depoimentos", "#depoimentos"], ["Contato", "#contato"]].map(([t, a]) => (
-            <button key={a} onClick={() => ir(a)} aria-label={t}>
+            <button
+              key={a}
+              onClick={() => ir(a)}
+              aria-label={t}
+              aria-current={secao === a.slice(1) ? "true" : undefined}
+              className={secao === a.slice(1) ? "v2nav--aqui" : undefined}
+            >
               <VariableFontHover
                 label={t}
                 fromFontVariationSettings="'wght' 500 'opsz' 14"
@@ -416,6 +448,11 @@ export default function V2() {
               <button className="v2ft__link" onClick={() => ir("#depoimentos")}>Depoimentos</button>
             </div>
           </div>
+        </div>
+
+        <div className="v2ft__marca v2ft__anim">
+          <Image src="/integra-logo.png" alt="" width={78} height={84} className="v2marca__simbolo" />
+          <Image src="/integra-wordmark.png" alt="Íntegra — Consultoria de Marketing" width={894} height={201} className="v2marca__nome" />
         </div>
 
         <div className="v2ft__base v2ft__anim">

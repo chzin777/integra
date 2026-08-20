@@ -15,6 +15,7 @@
   --ouro-fundo: #e6892f;
   --ouro-veu: rgba(233, 180, 76, 0.08);
   --ouro-borda: rgba(233, 180, 76, 0.34);
+  --ouro-grifo: rgba(233, 180, 76, 0.3);
   --grad-ouro: linear-gradient(115deg, #ffe08a 0%, #f5b642 42%, #e6892f 100%);
   --linha: rgba(244, 236, 218, 0.13);
   --curva: cubic-bezier(0.22, 1, 0.36, 1);
@@ -45,6 +46,7 @@
   --ouro: #8a5a12;
   --ouro-veu: rgba(138, 90, 18, 0.1);
   --ouro-borda: rgba(138, 90, 18, 0.38);
+  --ouro-grifo: rgba(233, 180, 76, 0.55);
   color-scheme: light;
 }
 .v2--claro .v2nav--on { background: rgba(244, 238, 225, 0.8); }
@@ -110,6 +112,15 @@
 }
 .v2ghost:hover { border-color: var(--ouro); background: var(--ouro-veu); transform: translateY(-2px); }
 
+/* A barra é fixa: o pulo por âncora precisa parar antes dela. */
+.v2 [id] { scroll-margin-top: 92px; }
+
+/* ---------- marca ---------- */
+/* O wordmark vem da própria logo, em branco. Como o desenho é monocromático,
+   no papel claro basta invertê-lo para obter o mesmo traço em preto. */
+.v2marca__simbolo, .v2marca__nome { display: block; height: auto; }
+.v2--claro .v2marca__nome { filter: invert(1); }
+
 /* ---------- nav ---------- */
 .v2nav {
   position: fixed; z-index: 70; inset: 0 0 auto 0; height: 76px;
@@ -124,9 +135,13 @@
   border-bottom-color: var(--linha);
 }
 .v2nav__marca {
-  border: 0; background: none; color: var(--ouro); cursor: pointer;
-  font-family: var(--v2-display), serif; font-size: 27px; font-weight: 600; letter-spacing: 0.02em;
+  border: 0; background: none; padding: 0; cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  transition: opacity 0.3s;
 }
+.v2nav__marca:hover { opacity: 0.75; }
+.v2nav__marca .v2marca__simbolo { width: 26px; }
+.v2nav__marca .v2marca__nome { width: 106px; }
 .v2nav__links { display: flex; gap: 4px; }
 /* Cor por token: escura no tema claro, clara no escuro — sempre legível. */
 .v2nav__links button {
@@ -143,6 +158,20 @@
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .v2nav__links button:hover::before { transform-origin: left; transform: scaleX(1); }
+/* A seção em que o leitor está fica grifada, como caneta passada no papel.
+   O traço cresce da esquerda; o sublinhado do hover segue independente. */
+.v2nav__links button::after {
+  content: ""; position: absolute; z-index: -1; left: -2px; right: -2px; bottom: 5px;
+  height: 0.62em; border-radius: 2px; background: var(--ouro-grifo);
+  transform: skewX(-3deg) scaleX(0); transform-origin: left center;
+  transition: transform 0.5s var(--curva);
+}
+.v2nav__links button { isolation: isolate; }
+.v2nav__links button.v2nav--aqui { color: var(--tinta); }
+.v2nav__links button.v2nav--aqui::after { transform: skewX(-3deg) scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .v2nav__links button::after { transition: none; }
+}
 .v2nav__acoes { display: flex; align-items: center; gap: 12px; }
 .v2tema {
   width: 40px; height: 40px; display: grid; place-items: center;
@@ -388,23 +417,53 @@
 
 /* Wordmark gigante (inspiração footer-section-5 do 21st). */
 .v2ft__marca {
-  margin: clamp(50px, 8vw, 110px) 0 clamp(20px, 3vw, 40px);
-  font-family: var(--v2-display), serif; font-style: italic; font-weight: 500;
-  font-size: clamp(90px, 26vw, 420px); line-height: 0.8; letter-spacing: -0.02em;
-  color: var(--ouro);
+  display: flex; align-items: center; gap: clamp(16px, 2.2vw, 28px);
+  margin: clamp(34px, 5vw, 64px) 0 0;
 }
+.v2ft__marca .v2marca__simbolo { width: clamp(56px, 7vw, 84px); }
+.v2ft__marca .v2marca__nome { width: clamp(180px, 24vw, 290px); }
 .v2ft__base {
   display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
-  margin-top: clamp(50px, 7vw, 90px);
+  margin-top: clamp(26px, 3.5vw, 42px);
   border-top: 1px solid var(--linha); padding-top: 22px;
   font-size: 12px; letter-spacing: 0.03em; color: var(--tinta-fraca);
 }
 
 /* ---------- responsivo ---------- */
 @media (max-width: 900px) {
-  .v2nav__links { display: none; }
-  .v2h { grid-template-columns: 1fr; }
-  .v2h__mid { min-height: 52vh; order: -1; }
+  /* No celular a nav vira duas faixas: marca em cima, seções numa tira que
+     rola de lado — assim o grifo da seção atual continua visível. */
+  .v2nav { height: auto; flex-wrap: wrap; padding: 10px 16px 0; row-gap: 2px; }
+  .v2nav__marca .v2marca__simbolo { width: 22px; }
+  .v2nav__marca .v2marca__nome { width: 88px; }
+  .v2nav__acoes .v2btn--sm { display: none; }
+  .v2tema { width: 36px; height: 36px; }
+  .v2nav__links {
+    order: 3; width: 100%; gap: 0;
+    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .v2nav__links::-webkit-scrollbar { display: none; }
+  .v2nav__links button {
+    margin: 0 12px 0 0; padding: 4px 2px 8px; font-size: 15px; white-space: nowrap;
+  }
+  .v2nav__links button:first-child { margin-left: 2px; }
+  .v2nav__links button::after { bottom: 8px; }
+  /* Sem transparência: a tira de seções precisa se separar do conteúdo. */
+  .v2nav {
+    background: rgba(16, 14, 11, 0.86);
+    backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border-bottom-color: var(--linha);
+  }
+  .v2--claro .v2nav { background: rgba(244, 238, 225, 0.9); }
+  .v2 [id] { scroll-margin-top: 104px; }
+  /* Título primeiro: quem abre no celular precisa ler antes de ver foto. */
+  .v2h { grid-template-columns: 1fr; padding-top: 132px; min-height: 0; }
+  .v2h__mid { min-height: 44vh; order: 1; }
+  /* Cada frase do título cabe em uma linha só: sem quebra no meio. */
+  .v2h__t { font-size: clamp(34px, 8.6vw, 44px); }
+  .v2h__sub { font-size: 16px; }
+  .v2h__acoes { gap: 12px; }
+  .v2h__acoes .v2btn, .v2ghost { width: 100%; justify-content: center; }
   .v2h__acoes .v2btn { animation: none; }
   .v2sobre__grade, .v2dep__grade { grid-template-columns: 1fr; }
   .v2serv__grade { grid-template-columns: 1fr; }
