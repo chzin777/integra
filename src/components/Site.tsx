@@ -46,19 +46,6 @@ export default function Site() {
         }),
       );
 
-      // A faixa anda com a rolagem: o movimento marca a passagem de um bloco
-      // para o outro, não decora.
-      gsap.to(".faixa-texto__trilho", {
-        xPercent: -46,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".faixa-texto",
-          start: "top bottom",
-          end: "bottom top",
-          scrub: 1,
-        },
-      });
-
       /**
        * Rede de segurança contra a armadilha número um do ScrollTrigger: ele
        * pré-calcula start e end uma vez. Fonte que carrega depois ou imagem que
@@ -88,12 +75,6 @@ export default function Site() {
       <main>
         <Hero aoIr={ir} aoAbrirContato={abrir} />
         <Servicos aoAbrirContato={abrir} />
-
-        <section className="faixa-texto" aria-hidden>
-          <div className="faixa-texto__trilho">
-            IDENTIDADE / CONTEÚDO / TRÁFEGO / IDENTIDADE / CONTEÚDO / TRÁFEGO /
-          </div>
-        </section>
 
         <Manifesto />
         <Metodo />

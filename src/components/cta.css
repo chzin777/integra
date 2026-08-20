@@ -1,10 +1,11 @@
-/* Fechamento da página. Ver CtaFinal.tsx. */
+/* Fechamento da página: o único bloco escuro cheio. Ver CtaFinal.tsx. */
 
 .cta {
   position: relative;
-  padding: clamp(90px, 12vw, 150px) 6vw 80px;
+  padding: clamp(90px, 12vw, 150px) 6vw clamp(60px, 7vw, 90px);
   overflow: hidden;
   isolation: isolate;
+  background: var(--fundo-forte);
 }
 
 .cta__fundo {
@@ -16,47 +17,28 @@
   position: absolute;
   inset: -8%;
   background: url("/images/estudio.png") center 34% / cover no-repeat;
-  filter: brightness(0.5) saturate(1.05);
+  filter: brightness(0.55);
   will-change: transform;
 }
 .cta__veu {
   position: absolute;
   inset: 0;
-  background:
-    radial-gradient(
-      68% 58% at 50% 32%,
-      rgba(255, 212, 0, 0.14),
-      transparent 72%
-    ),
-    linear-gradient(
-      to bottom,
-      rgba(11, 11, 11, 0.86),
-      rgba(11, 11, 11, 0.95) 62%,
-      var(--preto)
-    );
+  background: linear-gradient(
+    to bottom,
+    rgba(16, 16, 18, 0.82),
+    rgba(16, 16, 18, 0.94) 60%,
+    var(--fundo-forte)
+  );
 }
 
 .cta__cartao {
   position: relative;
   max-width: 1180px;
   margin: 0 auto;
-  padding: clamp(40px, 6vw, 92px);
-  border-radius: 22px;
-  overflow: hidden;
-  background: linear-gradient(
-    150deg,
-    rgba(246, 245, 242, 0.09),
-    rgba(246, 245, 242, 0.03)
-  );
-  border: 1px solid var(--linha);
-  box-shadow:
-    inset 0 1px 0 rgba(246, 245, 242, 0.18),
-    0 40px 90px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(24px) saturate(140%);
-  -webkit-backdrop-filter: blur(24px) saturate(140%);
 }
 
-/* O halo fica atrás do conteúdo para iluminar sem lavar o texto. */
+/* O halo segue o cursor e fica atrás do conteúdo, para iluminar sem lavar o
+   texto. */
 .cta__halo {
   position: absolute;
   left: 50%;
@@ -65,11 +47,7 @@
   height: 620px;
   margin: -310px 0 0 -310px;
   border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 212, 0, 0.22),
-    transparent 68%
-  );
+  background: radial-gradient(circle, rgba(255, 212, 0, 0.18), transparent 68%);
   opacity: 0;
   pointer-events: none;
   z-index: 0;
@@ -81,14 +59,15 @@
 }
 
 .cta h2 {
-  font-size: clamp(38px, 6.4vw, 104px);
-  line-height: 0.94;
+  font-size: clamp(38px, 6.4vw, 100px);
+  line-height: 0.98;
   margin: 30px 0 0;
+  max-width: 18ch;
 }
 
 .cta__linha {
   max-width: 48ch;
-  margin: 30px 0 0;
+  margin: 28px 0 0;
   font-size: 17px;
   line-height: 1.7;
   color: var(--texto-fraco);
@@ -99,7 +78,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 18px 30px;
-  margin-top: 46px;
+  margin-top: 44px;
 }
 
 /* Pulso na ação final: é a única ação da página e precisa chamar o olho depois
@@ -135,25 +114,18 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .cta__pulso::after {
-    animation: none;
-    opacity: 0;
-  }
-}
-
 .cta__base {
   margin-top: clamp(52px, 7vw, 96px);
   padding-top: 32px;
   border-top: 1px solid var(--linha);
   display: grid;
   grid-template-columns: auto 1fr auto;
-  align-items: start;
+  align-items: center;
   gap: 40px;
 }
 
 .cta__marca {
-  height: 74px;
+  height: 68px;
   width: auto;
   display: block;
 }
@@ -162,7 +134,7 @@
   margin: 0;
   font-size: 12.5px;
   line-height: 1.7;
-  color: rgba(246, 245, 242, 0.5);
+  color: var(--texto-fraco);
 }
 
 .cta__links {
@@ -173,25 +145,21 @@
   font-size: 12.5px;
 }
 .cta__links a {
-  color: var(--branco);
+  color: var(--tinta);
   text-decoration: none;
-  opacity: 0.7;
+  opacity: 0.75;
   transition: 0.25s;
 }
 .cta__links a:hover {
   opacity: 1;
-  color: var(--amarelo);
 }
 .cta__links span {
-  opacity: 0.34;
+  color: var(--texto-fraco);
 }
 
 @media (max-width: 860px) {
   .cta {
     padding: 84px 20px 56px;
-  }
-  .cta__cartao {
-    padding: 34px 22px;
   }
   .cta h2 {
     font-size: 11vw;
@@ -199,6 +167,7 @@
   .cta__base {
     grid-template-columns: 1fr;
     gap: 24px;
+    align-items: start;
   }
   .cta__links {
     align-items: flex-start;
@@ -214,5 +183,9 @@
   }
   .cta__halo {
     display: none;
+  }
+  .cta__pulso::after {
+    animation: none;
+    opacity: 0;
   }
 }

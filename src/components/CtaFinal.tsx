@@ -81,7 +81,7 @@ export default function CtaFinal({
   }, []);
 
   return (
-    <section className="cta" id="contato" ref={raiz}>
+    <section className="cta bloco-escuro" id="contato" ref={raiz}>
       <div className="cta__fundo" aria-hidden>
         <div className="cta__foto" />
         <div className="cta__veu" />

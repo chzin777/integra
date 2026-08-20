@@ -1,13 +1,13 @@
 /* Galeria em sanfona. Ver Portfolio.tsx. */
 
 .portfolio {
-  background: var(--carvao);
+  background: var(--fundo-alt);
 }
 
 .portfolio__sanfona {
   display: flex;
   gap: 10px;
-  height: min(62vh, 560px);
+  height: min(64vh, 580px);
   margin-top: clamp(40px, 5vw, 72px);
 }
 
@@ -19,7 +19,7 @@
   padding: 0;
   border-radius: 22px;
   overflow: hidden;
-  background: var(--preto);
+  background: var(--fundo);
   will-change: flex-grow;
 }
 
@@ -36,11 +36,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(11, 11, 11, 0.85),
-    transparent 46%
-  );
+  background: linear-gradient(to top, rgba(16, 16, 18, 0.8), transparent 44%);
 }
 
 .faixa__rot {
@@ -52,6 +48,7 @@
   flex-direction: column;
   gap: 4px;
   text-align: left;
+  color: #f7f7f5;
   font-family: var(--fonte-display), sans-serif;
   font-weight: 600;
   font-size: 19px;
@@ -63,7 +60,7 @@
   font-weight: 500;
   font-size: 12px;
   letter-spacing: 0.02em;
-  color: var(--texto-fraco);
+  color: rgba(247, 247, 245, 0.7);
   opacity: 0;
   transform: translateY(6px);
   transition:
@@ -73,9 +70,6 @@
 .faixa--aberta .faixa__rot small {
   opacity: 1;
   transform: none;
-}
-.faixa--aberta .faixa__rot {
-  color: var(--amarelo);
 }
 
 @media (max-width: 900px) {

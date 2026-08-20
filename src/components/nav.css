@@ -12,6 +12,13 @@
   align-items: center;
   justify-content: space-between;
   pointer-events: none;
+  /* Véu branco só atrás da barra: a marca continua legível quando a página
+     rola por baixo dela. */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.94),
+    rgba(255, 255, 255, 0)
+  );
 }
 .topo > * {
   pointer-events: auto;
@@ -29,15 +36,12 @@
   height: 30px;
   width: auto;
   display: block;
-  /* A marca fica sobre foto: a sombra fina garante leitura em qualquer quadro. */
-  filter: drop-shadow(0 2px 12px rgba(0, 0, 0, 0.7));
 }
 .topo__marcaTexto {
   font-family: var(--fonte-display), sans-serif;
   font-weight: 800;
   font-size: 17px;
   letter-spacing: 0.16em;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.8);
 }
 
 .topo__menu {
@@ -48,9 +52,9 @@
   padding: 0 18px;
   border-radius: 100px;
   border: 1px solid var(--linha-forte);
-  background: rgba(11, 11, 11, 0.55);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   font-size: 13px;
   font-weight: 600;
   transition:
@@ -58,8 +62,8 @@
     border-color 0.3s;
 }
 .topo__menu:hover {
-  border-color: var(--amarelo);
-  background: rgba(255, 212, 0, 0.1);
+  border-color: var(--tinta);
+  background: var(--amarelo);
 }
 
 /* ---------- cortina ---------- */
@@ -78,9 +82,7 @@
   gap: clamp(24px, 4vh, 52px);
   padding: 112px 6vw 46px;
   overflow-y: auto;
-  background:
-    radial-gradient(70% 50% at 78% 8%, rgba(255, 212, 0, 0.16), transparent 62%),
-    linear-gradient(170deg, #151515 0%, var(--preto) 68%);
+  background: var(--fundo);
 }
 .cortina--aberta {
   transform: translateY(0);
@@ -89,7 +91,7 @@
 
 .cortina__corpo {
   display: grid;
-  grid-template-columns: 1fr minmax(0, 360px);
+  grid-template-columns: 1fr minmax(0, 340px);
   gap: 6vw;
   align-items: center;
   min-height: 0;
@@ -99,11 +101,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: clamp(2px, 1vh, 12px);
+  gap: clamp(2px, 1vh, 10px);
   min-width: 0;
 }
 
-/* O slot recorta o item para ele subir de dentro do chão. */
+/* O slot recorta o item para ele subir de dentro do papel. */
 .cortina__slot {
   overflow: hidden;
   padding-bottom: 0.06em;
@@ -119,20 +121,34 @@
   background: none;
   padding: 0;
   text-align: left;
-  transition: color 0.35s var(--curva);
-}
-.cortina__item:hover,
-.cortina__item:focus-visible {
-  color: var(--amarelo);
 }
 
 .cortina__rot {
+  position: relative;
   font-family: var(--fonte-display), sans-serif;
   font-weight: 600;
-  font-size: clamp(30px, min(6vw, 8.4vh), 78px);
+  font-size: clamp(30px, min(5.6vw, 8vh), 72px);
   letter-spacing: -0.05em;
   line-height: 1.06;
   white-space: nowrap;
+}
+/* O grifo cresce da esquerda no item sob o cursor: é a mesma caneta do resto
+   da página. */
+.cortina__rot::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -0.06em;
+  right: -0.06em;
+  top: 0.2em;
+  bottom: 0.16em;
+  background: var(--amarelo);
+  transform: skewX(-3deg) scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.45s var(--curva);
+}
+.cortina__item.esta-sobre .cortina__rot::before {
+  transform: skewX(-3deg) scaleX(1);
 }
 
 .cortina__nota {
@@ -146,10 +162,10 @@
   overflow: hidden;
   text-overflow: ellipsis;
   min-width: 0;
-  color: var(--branco);
+  color: var(--texto-fraco);
 }
 .cortina__item.esta-sobre .cortina__nota {
-  opacity: 0.5;
+  opacity: 1;
   transform: none;
 }
 
@@ -157,13 +173,12 @@
 .cortina__previa {
   position: relative;
   aspect-ratio: 4/5;
-  max-height: min(46vh, 440px);
+  max-height: min(46vh, 420px);
   width: 100%;
   justify-self: end;
   border-radius: 22px;
   overflow: hidden;
-  background: var(--carvao);
-  box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.8);
+  background: var(--fundo-alt);
 }
 .cortina__previa img {
   position: absolute;
@@ -198,7 +213,7 @@
   transition: color 0.25s;
 }
 .cortina__insta:hover {
-  color: var(--amarelo);
+  color: var(--tinta);
 }
 
 @media (max-width: 900px) {

@@ -1,161 +1,73 @@
-/* Hero em camadas. A ordem e as velocidades estão explicadas no Hero.tsx. */
+/* Capa. Ver Hero.tsx: título à esquerda, uma foto à direita. */
 
 .hero {
-  --hero-pt: clamp(96px, 13vh, 150px);
-  --hero-pb: clamp(36px, 7vh, 84px);
-  --hero-px: 6vw;
-  /* Primeiro quadro; depois quem manda é o ResizeObserver. */
-  --hero-rodape: 150px;
-  position: relative;
   min-height: 100svh;
-  display: flex;
-  align-items: flex-end;
-  overflow: hidden;
-  background: var(--preto);
-  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  align-items: center;
+  gap: 5vw;
+  padding: clamp(120px, 16vh, 180px) 6vw clamp(60px, 9vh, 110px);
+  background: var(--fundo);
 }
 
-/* Cada camada é maior que a tela, senão o deslocamento expõe a borda. */
-.hero__ceu,
-.hero__foto,
-.hero__brilho,
-.hero__grade,
-.hero__frente,
-.hero__vinheta {
-  position: absolute;
-  left: -6%;
-  right: -6%;
-  top: -12%;
-  bottom: -12%;
-  pointer-events: none;
-  will-change: transform;
-}
-
-.hero__ceu {
-  background:
-    radial-gradient(110% 80% at 72% 6%, #1e1e1e 0%, transparent 58%),
-    linear-gradient(168deg, #131313 0%, var(--preto) 64%);
-}
-
-.hero__foto {
-  background: url("/images/estudio.png") center 26% / cover no-repeat;
-  opacity: 0.5;
-  filter: saturate(1.1) contrast(1.05);
-  /* A máscara apaga a base da foto para ela virar fundo, e não uma imagem
-     com corte reto no meio da tela. */
-  mask-image: linear-gradient(to bottom, #000 0%, #000 44%, transparent 80%);
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    #000 0%,
-    #000 44%,
-    transparent 80%
-  );
-}
-
-.hero__brilho {
-  background:
-    radial-gradient(36% 28% at 76% 38%, rgba(255, 212, 0, 0.28), transparent 70%),
-    radial-gradient(30% 22% at 16% 74%, rgba(255, 212, 0, 0.1), transparent 70%);
-  filter: blur(12px);
-}
-
-.hero__grade {
-  opacity: 0.06;
-  background-image:
-    linear-gradient(var(--branco) 1px, transparent 1px),
-    linear-gradient(90deg, var(--branco) 1px, transparent 1px);
-  background-size: 8vw 8vw;
-  mask-image: linear-gradient(to bottom, transparent, #000 34%, transparent 84%);
-  -webkit-mask-image: linear-gradient(
-    to bottom,
-    transparent,
-    #000 34%,
-    transparent 84%
-  );
-}
-
-/* O título fica na mesma altura de pilha dos botões: a névoa e a vinheta
-   passam por baixo dele, então texto e ação têm a mesma intensidade. A
-   profundidade continua vindo das camadas de fundo, que andam mais devagar. */
-.hero__conteudo {
-  position: relative;
-  z-index: 5;
-  width: 100%;
-  padding: var(--hero-pt) var(--hero-px) calc(var(--hero-pb) + var(--hero-rodape));
+.hero__texto {
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  min-height: 100svh;
-  will-change: transform;
+  align-items: flex-start;
+  gap: clamp(26px, 4vh, 44px);
+  min-width: 0;
 }
 
 .hero__rotulo {
-  align-self: flex-start;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 0 0 clamp(20px, 3vh, 36px);
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
 }
 .hero__rotulo i {
   display: inline-block;
   width: 30px;
-  height: 2px;
+  height: 3px;
   background: var(--amarelo);
 }
 
 .hero h1 {
   /* `min(vw, vh)`: em tela baixa e larga, o vw sozinho estoura a altura. */
-  font-size: clamp(40px, min(7.6vw, 11vh), 118px);
+  font-size: clamp(40px, min(6.4vw, 11vh), 104px);
   font-weight: 600;
-  line-height: 0.94;
-  letter-spacing: -0.055em;
+  line-height: 0.98;
+  letter-spacing: -0.05em;
   margin: 0;
-  max-width: 16ch;
+  max-width: 14ch;
 }
+/* O recorte faz a linha subir de dentro do papel em vez de só aparecer. O
+   respiro embaixo é para o grifo do marca-texto não ser cortado. */
 .hero__linha {
   display: block;
   overflow: hidden;
-  padding-bottom: 0.08em;
+  padding-bottom: 0.12em;
 }
 .hero__linha > span {
   display: block;
 }
 
-/* Mesma caixa do conteúdo, mesma âncora na base, só que no topo da pilha. */
-.hero__acima {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: var(--hero-pt) var(--hero-px) var(--hero-pb);
-  /* A camada cobre a tela inteira; só o conteúdo dela recebe clique. */
-  pointer-events: none;
-  will-change: transform;
-}
-.hero__acima > * {
-  pointer-events: auto;
-}
-
-.hero__rodape {
+.hero__apoio {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 24px;
-  max-width: 640px;
 }
-.hero__rodape p {
+.hero__apoio p {
   margin: 0;
-  font-size: 16.5px;
-  line-height: 1.6;
-  color: rgba(246, 245, 242, 0.82);
-  text-shadow: 0 1px 18px rgba(0, 0, 0, 0.8);
-  max-width: 42ch;
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--texto-fraco);
+  max-width: 40ch;
 }
 
 .hero__acoes {
@@ -165,67 +77,46 @@
   flex-wrap: wrap;
 }
 
-.hero__frente {
-  z-index: 3;
-  /* Não é foto: duas fotos coladas o olho lê como colagem, não como
-     profundidade. Uma névoa preta que sobe mais rápido resolve. */
-  background: linear-gradient(
-    to top,
-    var(--preto) 0%,
-    rgba(11, 11, 11, 0.92) 26%,
-    rgba(11, 11, 11, 0.6) 52%,
-    transparent 76%
-  );
-  opacity: 0.92;
+.hero__foto {
+  position: relative;
+  height: min(74vh, 660px);
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--fundo-alt);
+}
+/* A imagem é mais alta que a moldura para o parallax ter para onde correr sem
+   revelar borda. */
+.hero__foto img {
+  position: absolute;
+  inset: -8% 0;
+  width: 100%;
+  height: 116%;
+  object-fit: cover;
+  will-change: transform;
 }
 
-.hero__vinheta {
-  z-index: 4;
-  inset: 0;
-  background:
-    linear-gradient(to top, var(--preto) 0%, transparent 22%),
-    radial-gradient(
-      124% 96% at 50% 40%,
-      transparent 50%,
-      rgba(11, 11, 11, 0.62) 100%
-    );
-}
-
-@media (max-width: 800px) {
+@media (max-width: 900px) {
   .hero {
-    --hero-pt: 108px;
-    --hero-pb: 10vh;
-    --hero-px: 20px;
-    min-height: 94svh;
+    grid-template-columns: 1fr;
+    gap: 34px;
+    padding: 104px 20px 60px;
+    min-height: auto;
   }
   .hero h1 {
-    font-size: 12.5vw;
-    line-height: 0.98;
-  }
-  .hero__rodape {
-    width: 100%;
-    gap: 18px;
+    font-size: 12vw;
+    max-width: none;
   }
   .hero__acoes {
     width: 100%;
     gap: 10px;
   }
-  /* No celular a névoa cobriria o título inteiro. */
-  .hero__frente {
-    mask-image: linear-gradient(to bottom, transparent 66%, #000 90%);
-    -webkit-mask-image: linear-gradient(to bottom, transparent 66%, #000 90%);
+  .hero__foto {
+    height: 46vh;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__ceu,
-  .hero__foto,
-  .hero__brilho,
-  .hero__grade,
-  .hero__conteudo,
-  .hero__acima,
-  .hero__frente {
+  .hero__foto img {
     transform: none !important;
-    will-change: auto;
   }
 }

@@ -53,7 +53,9 @@ export default function Planos({
         {PLANOS.map((p) => (
           <article
             key={p.nome}
-            className={`plano ${p.destaque ? "plano--destaque" : ""}`}
+            className={`plano ${
+              p.destaque ? "plano--destaque bloco-escuro" : ""
+            }`}
           >
             <h3>{p.nome}</h3>
             <p className="plano__resumo">{p.resumo}</p>

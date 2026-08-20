@@ -2,21 +2,38 @@
 
 /* ============================================================
    Íntegra Consultoria de Marketing
-   Paleta: preto, amarelo, branco. Nada mais entra.
-   Raio: pílula nos elementos clicáveis, 22px nos blocos, 0 nas faixas.
+
+   Papel branco, tinta preta, amarelo como marca-texto. O amarelo nunca vira
+   texto sobre branco, porque não passa contraste: ele é bloco, grifo ou
+   preenchimento.
+
+   Raio: pílula nos elementos clicáveis, 22px nos blocos.
+   Blocos escuros (fechamento, plano em destaque, foto cheia) redefinem os
+   tokens em vez de trocar cor a cor.
    ============================================================ */
 
 :root {
-  --preto: #0b0b0b;
-  --carvao: #131313;
-  --grafite: #1c1c1c;
+  --fundo: #ffffff;
+  --fundo-alt: #f2f1ed;
+  --fundo-forte: #101012;
+  --tinta: #101012;
+  --texto-fraco: rgba(16, 16, 18, 0.64);
   --amarelo: #ffd400;
-  --amarelo-fundo: #f5c400;
-  --branco: #f6f5f2;
-  --linha: rgba(246, 245, 242, 0.14);
-  --linha-forte: rgba(246, 245, 242, 0.28);
-  --texto-fraco: rgba(246, 245, 242, 0.62);
+  --amarelo-fundo: #ffd400;
+  --linha: rgba(16, 16, 18, 0.14);
+  --linha-forte: rgba(16, 16, 18, 0.3);
   --curva: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Um bloco escuro no meio de uma página clara só funciona se ele redefinir os
+   tokens: assim todo componente lá dentro continua usando os mesmos nomes. */
+.bloco-escuro {
+  --fundo: #101012;
+  --tinta: #f7f7f5;
+  --texto-fraco: rgba(247, 247, 245, 0.66);
+  --linha: rgba(247, 247, 245, 0.16);
+  --linha-forte: rgba(247, 247, 245, 0.32);
+  color: var(--tinta);
 }
 
 * {
@@ -25,13 +42,13 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--preto);
+  background: var(--fundo);
 }
 
 body {
   margin: 0;
-  background: var(--preto);
-  color: var(--branco);
+  background: var(--fundo);
+  color: var(--tinta);
   font-family: var(--fonte-corpo), system-ui, sans-serif;
   font-weight: 400;
   overflow-x: clip;
@@ -56,24 +73,38 @@ h3 {
   margin: 0;
 }
 
-/* Ênfase dentro de título: mesma família, itálico. O amarelo faz o resto.
-   `padding-bottom` reserva o descendente do itálico, que senão é cortado. */
+/* Marca-texto: a assinatura da página. A palavra grifada é a única coisa
+   amarela dentro de um texto, e o grifo fica atrás dela, como quem passou a
+   caneta por cima do papel. */
 em {
-  font-style: italic;
-  font-weight: 600;
-  color: var(--amarelo);
-  line-height: 1.12;
-  padding-bottom: 0.06em;
+  position: relative;
   display: inline-block;
+  font-style: normal;
+  font-weight: inherit;
+  color: inherit;
+  isolation: isolate;
+  padding: 0 0.12em 0.06em;
+  line-height: 1.14;
+}
+em::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0.16em;
+  bottom: 0.12em;
+  background: var(--amarelo);
+  transform: skewX(-3deg);
 }
 
 ::selection {
   background: var(--amarelo);
-  color: var(--preto);
+  color: var(--fundo-forte);
 }
 
 :focus-visible {
-  outline: 2px solid var(--amarelo);
+  outline: 2px solid var(--fundo-forte);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -91,7 +122,7 @@ em {
   inset: 0;
   z-index: 70;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.03;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)'/%3E%3C/svg%3E");
 }
 
@@ -103,7 +134,7 @@ em {
 .rotulo {
   font-family: var(--fonte-corpo), sans-serif;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   display: flex;
@@ -115,13 +146,13 @@ em {
 .rotulo i {
   display: inline-block;
   width: 30px;
-  height: 2px;
+  height: 3px;
   background: var(--amarelo);
 }
 
 .titulo-secao {
   font-size: clamp(40px, 6vw, 96px);
-  line-height: 0.92;
+  line-height: 0.94;
   margin: 0;
 }
 
@@ -132,7 +163,8 @@ em {
   max-width: 52ch;
 }
 
-/* Botão sólido. Amarelo sobre preto passa contraste com folga nos dois sentidos. */
+/* Ação principal: bloco preto em pílula. Sobre papel branco, preto é o que
+   manda; o amarelo fica para o grifo. */
 .botao {
   display: inline-flex;
   align-items: center;
@@ -140,8 +172,8 @@ em {
   padding: 17px 28px;
   border: 0;
   border-radius: 100px;
-  background: var(--amarelo);
-  color: var(--preto);
+  background: var(--fundo-forte);
+  color: #f7f7f5;
   font-weight: 700;
   font-size: 15px;
   white-space: nowrap;
@@ -149,11 +181,11 @@ em {
   transition:
     transform 0.35s var(--curva),
     box-shadow 0.35s var(--curva);
-  box-shadow: 0 14px 34px -16px rgba(255, 212, 0, 0.9);
+  box-shadow: 0 14px 30px -18px rgba(16, 16, 18, 0.9);
 }
 .botao:hover {
   transform: translateY(-2px);
-  box-shadow: 0 22px 46px -18px rgba(255, 212, 0, 0.9);
+  box-shadow: 0 22px 40px -20px rgba(16, 16, 18, 0.9);
 }
 .botao:active {
   transform: translateY(0) scale(0.985);
@@ -165,6 +197,16 @@ em {
   transform: translate(3px, -3px);
 }
 
+/* Dentro de bloco escuro a ação inverte: aí o amarelo é que salta. */
+.bloco-escuro .botao {
+  background: var(--amarelo);
+  color: var(--fundo-forte);
+  box-shadow: 0 14px 34px -16px rgba(255, 212, 0, 0.85);
+}
+.bloco-escuro .botao:hover {
+  box-shadow: 0 22px 46px -18px rgba(255, 212, 0, 0.85);
+}
+
 .botao-fantasma {
   display: inline-flex;
   align-items: center;
@@ -173,8 +215,8 @@ em {
   border: 1px solid var(--linha-forte);
   border-radius: 100px;
   background: transparent;
-  color: var(--branco);
-  font-weight: 500;
+  color: var(--tinta);
+  font-weight: 600;
   font-size: 15px;
   white-space: nowrap;
   transition:
@@ -183,9 +225,12 @@ em {
     transform 0.3s var(--curva);
 }
 .botao-fantasma:hover {
-  border-color: var(--amarelo);
-  background: rgba(255, 212, 0, 0.08);
+  border-color: var(--tinta);
+  background: rgba(16, 16, 18, 0.05);
   transform: translateY(-2px);
+}
+.bloco-escuro .botao-fantasma:hover {
+  background: rgba(247, 247, 245, 0.08);
 }
 
 .entra {
