@@ -6,7 +6,7 @@ import { flushSync } from "react-dom";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
-import { ArrowUpRight, ArrowRight, Sun, Moon } from "lucide-react";
+import { ArrowUpRight, ArrowRight, Sun, Moon, Menu, X } from "lucide-react";
 import { EMAIL, INSTAGRAM, linkWhatsApp } from "@/lib/contato";
 import { createAnimation } from "@/components/ui/skiper-ui/skiper26";
 import { Link001 } from "@/components/ui/skiper-ui/skiper40";
@@ -69,6 +69,7 @@ export default function V2() {
   const [scrolled, setScrolled] = useState(false);
   const [secao, setSecao] = useState("");
   const [claro, setClaro] = useState(true);
+  const [menuAberto, setMenuAberto] = useState(false);
   const raiz = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
 
@@ -323,16 +324,19 @@ export default function V2() {
         </div>
       </div>
 
-      <nav className={`v2nav ${scrolled ? "v2nav--on" : ""}`}>
+      <nav className={`v2nav ${scrolled ? "v2nav--on" : ""} ${menuAberto ? "v2nav--aberta" : ""}`}>
         <button className="v2nav__marca" onClick={() => ir("#topo")} aria-label="Íntegra — voltar ao topo">
           <Image src="/integra-logo.png" alt="" width={28} height={30} priority className="v2marca__simbolo" />
           <Image src="/integra-nome.png" alt="Íntegra" width={894} height={144} priority className="v2marca__nome" />
         </button>
-        <div className="v2nav__links">
+        <div className="v2nav__links" id="v2-menu-mobile">
           {[["Sobre", "#sobre"], ["Serviços", "#servicos"], ["Portfólio", "#portfolio"], ["Depoimentos", "#depoimentos"], ["Contato", "#contato"]].map(([t, a]) => (
             <button
               key={a}
-              onClick={() => ir(a)}
+              onClick={() => {
+                ir(a);
+                setMenuAberto(false);
+              }}
               aria-label={t}
               aria-current={secao === a.slice(1) ? "true" : undefined}
               className={secao === a.slice(1) ? "v2nav--aqui" : undefined}
@@ -353,6 +357,15 @@ export default function V2() {
             {claro ? <Moon size={17} /> : <Sun size={17} />}
           </button>
           <button className="v2btn v2btn--sm" onClick={contato}>Fale conosco</button>
+          <button
+            className="v2nav__menu"
+            onClick={() => setMenuAberto((aberto) => !aberto)}
+            aria-label={menuAberto ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={menuAberto}
+            aria-controls="v2-menu-mobile"
+          >
+            {menuAberto ? <X size={21} /> : <Menu size={21} />}
+          </button>
         </div>
       </nav>
 

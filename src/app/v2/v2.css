@@ -171,6 +171,11 @@
   .v2nav__links button::after { transition: none; }
 }
 .v2nav__acoes { display: flex; align-items: center; gap: 12px; }
+.v2nav__menu {
+  display: none; width: 40px; height: 40px; padding: 0;
+  place-items: center; border: 1px solid var(--linha); border-radius: 50%;
+  background: transparent; color: var(--tinta); cursor: pointer;
+}
 .v2tema {
   width: 40px; height: 40px; display: grid; place-items: center;
   border: 1px solid var(--linha); border-radius: 50%; background: none;
@@ -441,36 +446,41 @@
 
 /* ---------- responsivo ---------- */
 @media (max-width: 900px) {
-  /* No celular a nav vira duas faixas: marca em cima, seções numa tira que
-     rola de lado — assim o grifo da seção atual continua visível. */
-  .v2nav { height: auto; flex-wrap: wrap; padding: 10px 16px 0; row-gap: 2px; }
+  .v2nav {
+    height: 68px; padding: 0 16px; gap: 12px;
+    background: rgba(16, 14, 11, 0.9);
+    backdrop-filter: blur(16px) saturate(150%); -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border-bottom-color: var(--linha);
+  }
   .v2nav__marca .v2marca__simbolo { width: 22px; }
   .v2nav__marca .v2marca__nome { width: 88px; }
   .v2nav__acoes .v2btn--sm { display: none; }
   .v2tema { width: 36px; height: 36px; }
+  .v2nav__menu { display: grid; width: 36px; height: 36px; }
   .v2nav__links {
-    order: 3; width: 100%; gap: 0;
-    overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    position: absolute; top: calc(100% + 8px); left: 12px; right: 12px;
+    display: grid; gap: 0; padding: 10px;
+    background: var(--preto-2); border: 1px solid var(--linha); border-radius: 16px;
+    box-shadow: 0 24px 60px -30px rgba(0, 0, 0, 0.75);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transform: translateY(-10px) scale(0.98); transform-origin: top;
+    transition: opacity 0.25s, visibility 0.25s, transform 0.25s var(--curva);
   }
-  .v2nav__links::-webkit-scrollbar { display: none; }
+  .v2nav--aberta .v2nav__links { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
   .v2nav__links button {
-    margin: 0 12px 0 0; padding: 4px 2px 8px; font-size: 15px; white-space: nowrap;
+    width: 100%; margin: 0; padding: 13px 14px; border-radius: 10px;
+    font-size: 18px; text-align: left;
   }
-  .v2nav__links button:first-child { margin-left: 2px; }
-  .v2nav__links button::after { bottom: 8px; }
-  /* Sem transparência: a tira de seções precisa se separar do conteúdo. */
-  .v2nav {
-    background: rgba(16, 14, 11, 0.86);
-    backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
-    border-bottom-color: var(--linha);
-  }
+  .v2nav__links button::before { display: none; }
+  .v2nav__links button::after { inset: 5px; height: auto; border-radius: 8px; opacity: 0.35; }
   .v2--claro .v2nav { background: rgba(244, 238, 225, 0.9); }
-  .v2 [id] { scroll-margin-top: 104px; }
+  .v2--claro .v2nav__links { background: rgba(250, 247, 239, 0.98); }
+  .v2 [id] { scroll-margin-top: 76px; }
   /* Título primeiro: quem abre no celular precisa ler antes de ver foto. */
   .v2h {
     grid-template-columns: 1fr; min-height: 0;
     gap: clamp(28px, 6vw, 48px);
-    padding: 118px clamp(20px, 5vw, 60px) clamp(56px, 9vw, 90px);
+    padding: 96px clamp(20px, 5vw, 60px) clamp(56px, 9vw, 90px);
   }
   .v2h::before { right: -24%; top: 4%; width: 82vw; }
   /* Ordem no celular: rótulo, título, texto, fotos e só então os botões —
@@ -514,7 +524,7 @@
 
 /* ---------- telas estreitas ---------- */
 @media (max-width: 560px) {
-  .v2h { padding-top: 110px; }
+  .v2h { padding-top: 92px; }
   .v2h__mid { height: min(42vh, 300px); }
   .v2h__foto--a { inset: 0 32% 14% 0; }
   .v2h__selo { padding: 9px 12px; font-size: 10px; letter-spacing: 0; }
