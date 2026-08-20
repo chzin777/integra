@@ -13,6 +13,8 @@
   --ouro: #e9b44c;
   --ouro-claro: #ffe08a;
   --ouro-fundo: #e6892f;
+  --ouro-veu: rgba(233, 180, 76, 0.08);
+  --ouro-borda: rgba(233, 180, 76, 0.34);
   --grad-ouro: linear-gradient(115deg, #ffe08a 0%, #f5b642 42%, #e6892f 100%);
   --linha: rgba(244, 236, 218, 0.13);
   --curva: cubic-bezier(0.22, 1, 0.36, 1);
@@ -30,7 +32,9 @@
 .v2 ::selection { background: var(--ouro); color: var(--preto); }
 .v2 :focus-visible { outline: 2px solid var(--ouro); outline-offset: 3px; }
 
-/* Tema claro: papel quente, tinta escura, o mesmo ouro vivo. */
+/* Tema claro: papel quente, tinta escura. O ouro claro some sobre bege
+   (contraste ~1.9:1), então no papel ele vira dourado queimado (~5.1:1)
+   e mantém a mesma família de cor. */
 .v2--claro {
   --preto: #f4eee1;
   --preto-2: #ebe3d3;
@@ -38,9 +42,14 @@
   --tinta: #2a2519;
   --tinta-fraca: rgba(42, 37, 25, 0.6);
   --linha: rgba(42, 37, 25, 0.15);
+  --ouro: #8a5a12;
+  --ouro-veu: rgba(138, 90, 18, 0.1);
+  --ouro-borda: rgba(138, 90, 18, 0.38);
   color-scheme: light;
 }
 .v2--claro .v2nav--on { background: rgba(244, 238, 225, 0.8); }
+/* A cortina de intro é sempre preta: ali o ouro vivo continua valendo. */
+.v2--claro .v2intro span { color: #e9b44c; }
 .v2--claro .v2__grao { opacity: 0.045; }
 
 .v2__grao {
@@ -60,17 +69,7 @@
   padding: 0;
   font-style: italic;
   font-family: var(--v2-display), Georgia, serif;
-  /* Gradiente simétrico (extremos = mesma cor) + shift de exatamente um tile:
-     loop perfeitamente contínuo, sem "teleporte". */
-  background: linear-gradient(115deg, #e6892f, #ffe08a, #e6892f);
-  background-size: 200% auto;
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  animation: v2brilho 6s linear infinite;
-}
-@keyframes v2brilho {
-  from { background-position: 0% center; }
-  to { background-position: -200% center; }
+  color: var(--ouro);
 }
 /* Anula o marca-texto amarelo global (globals.css) que vazava no /v2 e
    cobria a palavra dourada com um bloco sólido. */
@@ -104,12 +103,12 @@
 .v2btn--g { background: var(--grad-ouro); color: #2a1c05; }
 
 .v2ghost {
-  border: 1px solid rgba(233, 180, 76, 0.4); border-radius: 100px;
+  border: 1px solid var(--ouro-borda); border-radius: 100px;
   background: none; color: var(--tinta);
   padding: 14px 24px; font: inherit; font-weight: 600; font-size: 15px; cursor: pointer;
   transition: border-color 0.3s, background 0.3s, transform 0.3s var(--curva);
 }
-.v2ghost:hover { border-color: var(--ouro); background: rgba(233, 180, 76, 0.08); transform: translateY(-2px); }
+.v2ghost:hover { border-color: var(--ouro); background: var(--ouro-veu); transform: translateY(-2px); }
 
 /* ---------- nav ---------- */
 .v2nav {
@@ -125,8 +124,7 @@
   border-bottom-color: var(--linha);
 }
 .v2nav__marca {
-  border: 0; background: var(--grad-ouro); -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent; cursor: pointer;
+  border: 0; background: none; color: var(--ouro); cursor: pointer;
   font-family: var(--v2-display), serif; font-size: 27px; font-weight: 600; letter-spacing: 0.02em;
 }
 .v2nav__links { display: flex; gap: 4px; }
@@ -152,7 +150,7 @@
   color: var(--ouro); cursor: pointer;
   transition: border-color 0.3s, transform 0.3s var(--curva), background 0.3s;
 }
-.v2tema:hover { border-color: var(--ouro); transform: rotate(-25deg); background: rgba(233, 180, 76, 0.08); }
+.v2tema:hover { border-color: var(--ouro); transform: rotate(-25deg); background: var(--ouro-veu); }
 
 /* ---------- hero claro (split editorial) ---------- */
 .v2h {
@@ -224,8 +222,7 @@
 .v2intro span {
   font-family: var(--v2-display), serif; font-style: italic; font-weight: 500;
   font-size: clamp(48px, 9vw, 120px);
-  background: var(--grad-ouro); -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
+  color: var(--ouro);
 }
 
 /* ---------- seção base ---------- */
@@ -239,8 +236,7 @@
 .v2stat { display: flex; flex-direction: column; gap: 6px; }
 .v2stat strong {
   font-family: var(--v2-display), serif; font-weight: 500; font-size: clamp(38px, 5vw, 64px); line-height: 1;
-  background: var(--grad-ouro); -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
+  color: var(--ouro);
 }
 .v2stat span { font-size: 14px; color: var(--tinta-fraca); }
 
@@ -262,7 +258,7 @@
   transition: opacity 0.5s;
 }
 .v2serv__card:hover {
-  transform: translateY(-6px); border-color: rgba(233, 180, 76, 0.4);
+  transform: translateY(-6px); border-color: var(--ouro-borda);
   box-shadow: 0 34px 70px -44px rgba(0, 0, 0, 0.7);
 }
 .v2serv__card:hover::before { opacity: 1; }
@@ -314,11 +310,10 @@
   padding: 34px 30px 28px; display: flex; flex-direction: column; gap: 22px;
   transition: transform 0.5s var(--curva), box-shadow 0.5s var(--curva), border-color 0.4s;
 }
-.v2fala:hover { transform: translateY(-5px); border-color: rgba(233, 180, 76, 0.34); box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9); }
+.v2fala:hover { transform: translateY(-5px); border-color: var(--ouro-borda); box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9); }
 .v2fala__aspas {
   font-family: var(--v2-display), serif; font-size: 76px; line-height: 0.3; height: 30px;
-  background: var(--grad-ouro); -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
+  color: var(--ouro);
 }
 .v2fala blockquote { margin: 0; font-family: var(--v2-display), serif; font-weight: 400; font-size: 23px; line-height: 1.4; }
 .v2fala figcaption { display: flex; flex-direction: column; gap: 2px; margin-top: auto; }
@@ -396,11 +391,7 @@
   margin: clamp(50px, 8vw, 110px) 0 clamp(20px, 3vw, 40px);
   font-family: var(--v2-display), serif; font-style: italic; font-weight: 500;
   font-size: clamp(90px, 26vw, 420px); line-height: 0.8; letter-spacing: -0.02em;
-  background: linear-gradient(115deg, #ffe08a, #f5b642, #e6892f, #f5b642, #ffe08a);
-  background-size: 220% auto;
-  -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent;
-  animation: v2brilho 7s linear infinite;
+  color: var(--ouro);
 }
 .v2ft__base {
   display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
