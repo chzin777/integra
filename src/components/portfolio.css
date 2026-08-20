@@ -1,0 +1,105 @@
+/* Galeria em sanfona. Ver Portfolio.tsx. */
+
+.portfolio {
+  background: var(--carvao);
+}
+
+.portfolio__sanfona {
+  display: flex;
+  gap: 10px;
+  height: min(62vh, 560px);
+  margin-top: clamp(40px, 5vw, 72px);
+}
+
+.faixa {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--preto);
+  will-change: flex-grow;
+}
+
+.faixa img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform, filter;
+}
+
+.faixa::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(11, 11, 11, 0.85),
+    transparent 46%
+  );
+}
+
+.faixa__rot {
+  position: absolute;
+  left: 20px;
+  bottom: 18px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  font-family: var(--fonte-display), sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.faixa__rot small {
+  font-family: var(--fonte-corpo), sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--texto-fraco);
+  opacity: 0;
+  transform: translateY(6px);
+  transition:
+    opacity 0.4s var(--curva),
+    transform 0.4s var(--curva);
+}
+.faixa--aberta .faixa__rot small {
+  opacity: 1;
+  transform: none;
+}
+.faixa--aberta .faixa__rot {
+  color: var(--amarelo);
+}
+
+@media (max-width: 900px) {
+  /* Sanfona no celular vira faixa de 40px ilegível. Vira grade. */
+  .portfolio__sanfona {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+    gap: 10px;
+  }
+  .faixa {
+    aspect-ratio: 4/5;
+    flex: none;
+  }
+  .faixa img {
+    filter: none !important;
+    transform: none !important;
+  }
+  .faixa__rot small {
+    opacity: 1;
+    transform: none;
+  }
+  .faixa:first-child {
+    grid-column: 1 / -1;
+    aspect-ratio: 16/10;
+  }
+}

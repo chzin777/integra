@@ -1,26 +1,214 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Íntegra Consultoria de Marketing
+   Paleta: preto, amarelo, branco. Nada mais entra.
+   Raio: pílula nos elementos clicáveis, 22px nos blocos, 0 nas faixas.
+   ============================================================ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --preto: #0b0b0b;
+  --carvao: #131313;
+  --grafite: #1c1c1c;
+  --amarelo: #ffd400;
+  --amarelo-fundo: #f5c400;
+  --branco: #f6f5f2;
+  --linha: rgba(246, 245, 242, 0.14);
+  --linha-forte: rgba(246, 245, 242, 0.28);
+  --texto-fraco: rgba(246, 245, 242, 0.62);
+  --curva: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  background: var(--preto);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--preto);
+  color: var(--branco);
+  font-family: var(--fonte-corpo), system-ui, sans-serif;
+  font-weight: 400;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+a {
+  font: inherit;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fonte-display), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  margin: 0;
+}
+
+/* Ênfase dentro de título: mesma família, itálico. O amarelo faz o resto.
+   `padding-bottom` reserva o descendente do itálico, que senão é cortado. */
+em {
+  font-style: italic;
+  font-weight: 600;
+  color: var(--amarelo);
+  line-height: 1.12;
+  padding-bottom: 0.06em;
+  display: inline-block;
+}
+
+::selection {
+  background: var(--amarelo);
+  color: var(--preto);
+}
+
+:focus-visible {
+  outline: 2px solid var(--amarelo);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ---------- peças compartilhadas ---------- */
+
+.casca {
+  position: relative;
+  overflow-x: clip;
+}
+
+/* Grão fixo, nunca dentro de contêiner que rola: repaint contínuo mata o FPS. */
+.grao {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23r)'/%3E%3C/svg%3E");
+}
+
+.secao {
+  padding: clamp(90px, 12vw, 170px) 6vw;
+  position: relative;
+}
+
+.rotulo {
+  font-family: var(--fonte-corpo), sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: var(--texto-fraco);
+}
+.rotulo i {
+  display: inline-block;
+  width: 30px;
+  height: 2px;
+  background: var(--amarelo);
+}
+
+.titulo-secao {
+  font-size: clamp(40px, 6vw, 96px);
+  line-height: 0.92;
+  margin: 0;
+}
+
+.texto-apoio {
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--texto-fraco);
+  max-width: 52ch;
+}
+
+/* Botão sólido. Amarelo sobre preto passa contraste com folga nos dois sentidos. */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  padding: 17px 28px;
+  border: 0;
+  border-radius: 100px;
+  background: var(--amarelo);
+  color: var(--preto);
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+  text-decoration: none;
+  transition:
+    transform 0.35s var(--curva),
+    box-shadow 0.35s var(--curva);
+  box-shadow: 0 14px 34px -16px rgba(255, 212, 0, 0.9);
+}
+.botao:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 46px -18px rgba(255, 212, 0, 0.9);
+}
+.botao:active {
+  transform: translateY(0) scale(0.985);
+}
+.botao svg {
+  transition: transform 0.35s var(--curva);
+}
+.botao:hover svg {
+  transform: translate(3px, -3px);
+}
+
+.botao-fantasma {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 26px;
+  border: 1px solid var(--linha-forte);
+  border-radius: 100px;
+  background: transparent;
+  color: var(--branco);
+  font-weight: 500;
+  font-size: 15px;
+  white-space: nowrap;
+  transition:
+    border-color 0.3s,
+    background 0.3s,
+    transform 0.3s var(--curva);
+}
+.botao-fantasma:hover {
+  border-color: var(--amarelo);
+  background: rgba(255, 212, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+.entra {
+  will-change: transform, opacity;
+}
+
+@media (max-width: 800px) {
+  .secao {
+    padding: 84px 20px;
+  }
+  .botao,
+  .botao-fantasma {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .entra {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

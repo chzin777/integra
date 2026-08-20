@@ -1,0 +1,203 @@
+/* Formulário de contato. Ver ModalContato.tsx. */
+
+.mc {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  pointer-events: none;
+  visibility: hidden;
+}
+.mc--aberto {
+  pointer-events: auto;
+  visibility: visible;
+}
+
+.mc__veu {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 6, 6, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+}
+
+.mc__painel {
+  position: relative;
+  width: min(760px, 100%);
+  max-height: min(88vh, 860px);
+  border-radius: 22px;
+  overflow: hidden;
+  opacity: 0;
+  background: linear-gradient(155deg, #1a1a1a, #101010);
+  border: 1px solid var(--linha);
+  box-shadow: 0 50px 110px -30px rgba(0, 0, 0, 0.9);
+}
+
+/* Quem rola é o conteúdo, não o painel: com o painel rolando, o cabeçalho e o
+   botão de fechar saem de vista. */
+.mc__conteudo {
+  max-height: inherit;
+  overflow-y: auto;
+  padding: clamp(28px, 4vw, 52px);
+}
+
+.mc__fechar {
+  position: absolute;
+  z-index: 2;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+  border: 1px solid var(--linha);
+  background: rgba(11, 11, 11, 0.6);
+  display: grid;
+  place-items: center;
+  transition:
+    border-color 0.25s,
+    background 0.25s;
+}
+.mc__fechar:hover {
+  border-color: var(--amarelo);
+  background: rgba(255, 212, 0, 0.12);
+}
+
+.mc h3 {
+  font-size: clamp(28px, 3.6vw, 46px);
+  line-height: 1;
+  margin: 0;
+}
+.mc__sub {
+  margin: 16px 0 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--texto-fraco);
+  max-width: 44ch;
+}
+
+.mc__grade {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 32px;
+}
+.mc__campo--largo {
+  grid-column: 1 / -1;
+}
+
+.mc__campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mc__rotulo {
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(246, 245, 242, 0.78);
+}
+.mc__rotulo em {
+  font-style: normal;
+  font-weight: 500;
+  color: rgba(246, 245, 242, 0.42);
+  padding: 0;
+}
+
+.mc__campo input,
+.mc__campo select,
+.mc__campo textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--linha-forte);
+  background: rgba(246, 245, 242, 0.04);
+  color: var(--branco);
+  font-family: inherit;
+  font-size: 15px;
+  transition:
+    border-color 0.25s,
+    background 0.25s;
+}
+.mc__campo textarea {
+  resize: vertical;
+  min-height: 92px;
+}
+.mc__campo input::placeholder,
+.mc__campo textarea::placeholder {
+  /* Contraste suficiente para leitura, e ainda assim abaixo do texto digitado. */
+  color: rgba(246, 245, 242, 0.55);
+}
+.mc__campo input:focus,
+.mc__campo select:focus,
+.mc__campo textarea:focus {
+  border-color: var(--amarelo);
+  background: rgba(255, 212, 0, 0.06);
+}
+.mc__campo select option {
+  background: #151515;
+  color: var(--branco);
+}
+
+.mc__campo--erro input {
+  border-color: #ff8a5c;
+}
+.mc__erro {
+  font-size: 12.5px;
+  color: #ff9b73;
+}
+
+.mc__acoes {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+.mc__aviso {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: rgba(246, 245, 242, 0.45);
+  max-width: 34ch;
+}
+
+.mc__ok {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 20px 0;
+}
+.mc__okIcone {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--amarelo);
+  color: var(--preto);
+}
+.mc__ok p {
+  margin: 0;
+  color: var(--texto-fraco);
+  line-height: 1.7;
+  max-width: 46ch;
+}
+.mc__ok a {
+  color: var(--amarelo);
+}
+
+@media (max-width: 700px) {
+  .mc {
+    padding: 12px;
+  }
+  .mc__grade {
+    grid-template-columns: 1fr;
+  }
+  .mc__acoes .botao {
+    width: 100%;
+  }
+}
