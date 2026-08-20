@@ -17,6 +17,19 @@ const corpo = Manrope({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+// Fraunces em eixo variável para a home (/ = versão v2): permite animar o peso
+// da fonte via font-variation-settings nos links do nav.
+const v2display = Fraunces({
+  variable: "--v2-display",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+});
+const v2corpo = Manrope({
+  variable: "--v2-corpo",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+});
+
 export const metadata: Metadata = {
   title: "Íntegra Consultoria de Marketing",
   description:
@@ -32,7 +45,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="pt-BR" className={`${display.variable} ${corpo.variable}`}>
+    <html lang="pt-BR" className={`${display.variable} ${corpo.variable} ${v2display.variable} ${v2corpo.variable}`}>
       <body>{children}</body>
     </html>
   );

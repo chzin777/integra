@@ -1,5 +1,1 @@
-import Site from "@/components/Site";
-
-export default function Page() {
-  return <Site />;
-}
+export { default } from "./v2/page";
