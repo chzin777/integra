@@ -50,8 +50,6 @@
   color-scheme: light;
 }
 .v2--claro .v2nav--on { background: rgba(244, 238, 225, 0.8); }
-/* A cortina de intro é sempre preta: ali o ouro vivo continua valendo. */
-.v2--claro .v2intro span { color: #e9b44c; }
 .v2--claro .v2__grao { opacity: 0.045; }
 
 .v2__grao {
@@ -248,11 +246,11 @@
   position: fixed; inset: 0; z-index: 200;
   background: #100e0b; display: grid; place-items: center;
 }
-.v2intro span {
-  font-family: var(--v2-display), serif; font-style: italic; font-weight: 500;
-  font-size: clamp(48px, 9vw, 120px);
-  color: var(--ouro);
-}
+/* A cortina é sempre preta, então o wordmark branco vale mesmo no tema claro. */
+.v2intro__marca { display: flex; align-items: center; gap: clamp(12px, 2vw, 22px); }
+.v2intro__marca .v2marca__simbolo { width: clamp(40px, 7vw, 72px); }
+.v2intro__marca .v2marca__nome { width: clamp(150px, 30vw, 300px); }
+.v2--claro .v2intro .v2marca__nome { filter: none; }
 
 /* ---------- seção base ---------- */
 .v2sec { padding: clamp(80px, 11vw, 160px) clamp(20px, 5vw, 60px); }
@@ -323,10 +321,22 @@
   filter: brightness(0.9) saturate(1.06);
 }
 
+/* No celular a parede vira grade de duas colunas que rola com a página: as
+   colunas eram curtas demais para o deslocamento em múltiplos de tela e a
+   parede passava quase todo o tempo vazia. */
 @media (max-width: 760px) {
-  /* Parede de 4 colunas fica ilegível no celular: reduz e encurta. */
-  .v2wall { height: 130vh; gap: 3vw; padding: 3vw; }
-  .v2wall__col:nth-child(4) { display: none; }
+  .v2wall {
+    display: grid; grid-template-columns: 1fr 1fr; align-items: start;
+    height: auto; overflow: clip;
+    gap: 10px; padding: 64px clamp(20px, 5vw, 60px);
+  }
+  /* As colunas deslizam em sentidos opostos (GSAP); a folga vertical acima
+     absorve o movimento sem abrir buraco na moldura. */
+  .v2wall__col { top: 0 !important; gap: 10px; }
+  /* Segunda coluna descolada: mantém o ar de parede desencontrada. */
+  .v2wall__col:nth-child(2) { margin-top: 34px; }
+  .v2wall__col:nth-child(3), .v2wall__col:nth-child(4) { display: none; }
+  .v2wall__col img { border-radius: 10px; }
 }
 
 /* ---------- depoimentos ---------- */
@@ -457,13 +467,34 @@
   .v2--claro .v2nav { background: rgba(244, 238, 225, 0.9); }
   .v2 [id] { scroll-margin-top: 104px; }
   /* Título primeiro: quem abre no celular precisa ler antes de ver foto. */
-  .v2h { grid-template-columns: 1fr; padding-top: 132px; min-height: 0; }
-  .v2h__mid { min-height: 44vh; order: 1; }
+  .v2h {
+    grid-template-columns: 1fr; min-height: 0;
+    gap: clamp(28px, 6vw, 48px);
+    padding: 118px clamp(20px, 5vw, 60px) clamp(56px, 9vw, 90px);
+  }
+  .v2h::before { right: -24%; top: 4%; width: 82vw; }
+  /* Ordem no celular: rótulo, título, texto, fotos e só então os botões —
+     a imagem vende antes de pedir o clique. Por isso o bloco de texto vira
+     "contents" e cada pedaço entra direto na grade do hero. */
+  .v2h { gap: 18px; }
+  .v2h__texto { display: contents; }
+  .v2h__texto > * { position: relative; z-index: 1; }
+  .v2h .v2rot { order: 1; }
+  .v2h__t { order: 2; }
+  .v2h__sub { order: 3; }
+  /* A altura fixa de 72vh vinha da versão de duas colunas e empurrava o
+     conteúdo seguinte para fora da tela. */
+  .v2h__mid { order: 4; margin: 8px 0; height: min(48vh, 360px); }
+  .v2h__acoes { order: 5; }
+  .v2h__foto--a { inset: 0 34% 12% 0; }
+  .v2h__foto--b { width: 50%; bottom: 0; }
+  .v2h__selo { padding: 10px 14px; font-size: 11px; bottom: 0; }
+  .v2h__selo span { font-size: 14px; }
   /* Cada frase do título cabe em uma linha só: sem quebra no meio. */
-  .v2h__t { font-size: clamp(34px, 8.6vw, 44px); }
-  .v2h__sub { font-size: 16px; }
-  .v2h__acoes { gap: 12px; }
-  .v2h__acoes .v2btn, .v2ghost { width: 100%; justify-content: center; }
+  .v2h__t { font-size: clamp(32px, 8.4vw, 46px); }
+  .v2h__sub { font-size: 16px; max-width: none; }
+  .v2h__acoes { gap: 12px; width: 100%; }
+  .v2h__acoes .v2btn, .v2h__acoes .v2ghost { width: 100%; justify-content: center; }
   .v2h__acoes .v2btn { animation: none; }
   .v2sobre__grade, .v2dep__grade { grid-template-columns: 1fr; }
   .v2serv__grade { grid-template-columns: 1fr; }
@@ -471,9 +502,35 @@
   .v2ft { height: auto; clip-path: none; }
   .v2ft__fix { position: static; height: auto; }
   .v2ft__sticky { position: static; top: auto; height: auto; overflow: visible; }
-  .v2ft__topo { grid-template-columns: 1fr; gap: 44px; }
-  .v2linha { grid-template-columns: 40px 1fr 30px; gap: 10px 16px; }
-  .v2linha p { grid-column: 2 / -1; }
+  .v2ft__panel { min-height: 0; }
+  .v2ft__topo { grid-template-columns: 1fr; gap: 40px; }
+  .v2ft__botao { width: 100%; justify-content: center; }
+  /* O wordmark gigante estourava a largura: aqui ele acompanha a tela. */
+  .v2ft__marca { gap: 14px; }
+  .v2ft__marca .v2marca__simbolo { width: clamp(40px, 9vw, 56px); }
+  .v2ft__marca .v2marca__nome { width: min(62vw, 250px); }
+  .v2ft__aura { left: -10%; width: 90vw; }
+}
+
+/* ---------- telas estreitas ---------- */
+@media (max-width: 560px) {
+  .v2h { padding-top: 110px; }
+  .v2h__mid { height: min(42vh, 300px); }
+  .v2h__foto--a { inset: 0 32% 14% 0; }
+  .v2h__selo { padding: 9px 12px; font-size: 10px; letter-spacing: 0; }
+  .v2h__tags span { font-size: 11px; padding: 6px 11px; }
+  .v2big { font-size: clamp(28px, 7.6vw, 40px); max-width: none; }
+  .v2serv__card { min-height: 0; padding: 26px 22px; }
+  .v2serv__card h3 { font-size: 24px; }
+  .v2serv__seta { top: 26px; right: 22px; }
+  .v2fala { padding: 28px 22px 24px; }
+  .v2fala blockquote { font-size: 20px; }
+  .v2ft__cols { grid-template-columns: 1fr; gap: 30px; }
+  .v2ft__t { font-size: clamp(28px, 8vw, 40px); max-width: none; }
+  .v2ft__base { font-size: 11px; gap: 8px; }
+  /* Balão do WhatsApp aberto não cabe: fica só o ícone. */
+  .v2zap:hover { width: 58px; gap: 0; }
+  .v2zap:hover .v2zap__balao { max-width: 0; opacity: 0; margin-left: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   .v2 * { animation: none !important; }

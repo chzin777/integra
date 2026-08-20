@@ -93,6 +93,8 @@ export default function V2() {
       gsap.ticker.lagSmoothing(0);
     }
 
+    const mmWall = gsap.matchMedia();
+
     const ctx = gsap.context(() => {
       // 0) Scrollspy: a seção em que o leitor está fica grifada na navbar.
       // Um trigger só, decidindo pela última seção que já cruzou a linha de
@@ -116,8 +118,8 @@ export default function V2() {
       const introTl = gsap.timeline();
       if (!reduz) {
         introTl
-          .from(".v2intro span", { yPercent: 40, opacity: 0, duration: 0.7, ease: "power3.out" })
-          .to(".v2intro span", { yPercent: -10, opacity: 0, duration: 0.4, delay: 0.4, ease: "power2.in" })
+          .from(".v2intro__marca", { yPercent: 30, opacity: 0, duration: 0.7, ease: "power3.out" })
+          .to(".v2intro__marca", { yPercent: -10, opacity: 0, duration: 0.4, delay: 0.4, ease: "power2.in" })
           .to(".v2intro", { yPercent: -100, duration: 0.8, ease: "power4.inOut" }, "-=0.1")
           .set(".v2intro", { display: "none" });
       } else {
@@ -199,16 +201,34 @@ export default function V2() {
         );
 
         // 5) Parede de fotos skiper30: cada coluna corre múltiplos da altura
-        // da tela, em velocidades diferentes (scrub).
-        const H = () => window.innerHeight;
-        gsap.utils.toArray<HTMLElement>(".v2wall__col").forEach((col) => {
-          const mult = parseFloat(col.dataset.mult || "1");
-          gsap.fromTo(col, { y: 0 }, {
-            y: () => H() * mult, ease: "none",
-            scrollTrigger: {
-              trigger: ".v2wall", start: "top bottom", end: "bottom top",
-              scrub: true, invalidateOnRefresh: true,
-            },
+        // da tela, em velocidades diferentes (scrub). Só no desktop: no
+        // celular as colunas são curtas demais e o deslocamento deixava a
+        // parede vazia na maior parte do tempo — lá vira grade normal.
+        // No celular a parede é grade curta: o movimento é pequeno e em
+        // sentidos opostos, só para dar profundidade.
+        mmWall.add("(max-width: 760px)", () => {
+          gsap.utils.toArray<HTMLElement>(".v2wall__col").forEach((col, i) => {
+            gsap.fromTo(col, { y: i % 2 ? -46 : 46 }, {
+              y: i % 2 ? 46 : -46, ease: "none",
+              scrollTrigger: {
+                trigger: ".v2wall", start: "top bottom", end: "bottom top",
+                scrub: true, invalidateOnRefresh: true,
+              },
+            });
+          });
+        });
+
+        mmWall.add("(min-width: 761px)", () => {
+          const H = () => window.innerHeight;
+          gsap.utils.toArray<HTMLElement>(".v2wall__col").forEach((col) => {
+            const mult = parseFloat(col.dataset.mult || "1");
+            gsap.fromTo(col, { y: 0 }, {
+              y: () => H() * mult, ease: "none",
+              scrollTrigger: {
+                trigger: ".v2wall", start: "top bottom", end: "bottom top",
+                scrub: true, invalidateOnRefresh: true,
+              },
+            });
           });
         });
 
@@ -224,9 +244,11 @@ export default function V2() {
           duration: 1, ease: "power3.out", stagger: 0.14,
           scrollTrigger: { trigger: ".v2ft", start: "top 78%", once: true },
         });
+        // O fim é o fim da página: no celular o rodapé nunca chega a 55% da
+        // tela, e o título ficava travado deslocado no meio do tween.
         gsap.from(".v2ft__t", {
           y: 40, ease: "none",
-          scrollTrigger: { trigger: ".v2ft", start: "top bottom", end: "top 55%", scrub: true },
+          scrollTrigger: { trigger: ".v2ft", start: "top bottom", end: "bottom bottom", scrub: true },
         });
         const ft = raiz.current!.querySelector<HTMLElement>(".v2ft");
         if (ft && mm.matches) {
@@ -245,6 +267,7 @@ export default function V2() {
     }, raiz);
 
     return () => {
+      mmWall.revert();
       ctx.revert();
       lenis?.destroy();
     };
@@ -292,7 +315,13 @@ export default function V2() {
         <span className="v2zap__balao">Fale no WhatsApp</span>
       </a>
 
-      <div className="v2intro" ref={introRef}><span>Íntegra</span></div>
+      {/* A cortina de entrada mostra a mesma marca da navbar. */}
+      <div className="v2intro" ref={introRef}>
+        <div className="v2intro__marca">
+          <Image src="/integra-logo.png" alt="" width={84} height={90} priority className="v2marca__simbolo" />
+          <Image src="/integra-nome.png" alt="Íntegra" width={894} height={144} priority className="v2marca__nome" />
+        </div>
+      </div>
 
       <nav className={`v2nav ${scrolled ? "v2nav--on" : ""}`}>
         <button className="v2nav__marca" onClick={() => ir("#topo")} aria-label="Íntegra — voltar ao topo">
