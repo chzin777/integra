@@ -20,8 +20,22 @@ const PROPORCAO_ABERTA = 0.5;
  */
 export default function Portfolio() {
   const [ativo, setAtivo] = useState(1);
+  const [parado, setParado] = useState(false);
   const faixas = useRef<(HTMLButtonElement | null)[]>([]);
   const fotos = useRef<(HTMLImageElement | null)[]>([]);
+
+  // A sanfona anda sozinha para quem só passa o olho ver as cinco peças. Para
+  // no ponteiro e no teclado, senão ela troca de peça embaixo de quem parou
+  // para olhar uma.
+  useEffect(() => {
+    if (parado) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = setInterval(
+      () => setAtivo((i) => (i + 1) % PECAS.length),
+      3800,
+    );
+    return () => clearInterval(t);
+  }, [parado]);
 
   useEffect(() => {
     const cresce =
@@ -51,7 +65,13 @@ export default function Portfolio() {
         <em>está na rua.</em>
       </h2>
 
-      <div className="portfolio__sanfona">
+      <div
+        className="portfolio__sanfona"
+        onMouseEnter={() => setParado(true)}
+        onMouseLeave={() => setParado(false)}
+        onFocusCapture={() => setParado(true)}
+        onBlurCapture={() => setParado(false)}
+      >
         {PECAS.map((p, i) => (
           <button
             key={p.img}

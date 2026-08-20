@@ -1,0 +1,74 @@
+/* Barra de leitura e atalho de WhatsApp. Ver Flutuante.tsx. */
+
+.progresso {
+  position: fixed;
+  z-index: 65;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  pointer-events: none;
+}
+.progresso__barra {
+  height: 100%;
+  width: 100%;
+  background: var(--amarelo);
+  transform: scaleX(0);
+  transform-origin: left center;
+  will-change: transform;
+}
+
+.zap {
+  position: fixed;
+  z-index: 65;
+  right: 24px;
+  bottom: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  border-radius: 100px;
+  background: var(--fundo-forte);
+  color: #f7f7f5;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 18px 40px -18px rgba(16, 16, 18, 0.8);
+  /* Fica fora do caminho até a capa passar. `visibility` junto da opacidade
+     para o link não continuar clicável enquanto está invisível. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(14px);
+  transition:
+    opacity 0.4s var(--curva),
+    transform 0.4s var(--curva),
+    visibility 0.4s,
+    background 0.3s,
+    color 0.3s;
+}
+.zap--visivel {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.zap:hover {
+  background: var(--amarelo);
+  color: var(--fundo-forte);
+}
+
+@media (max-width: 700px) {
+  .zap {
+    right: 16px;
+    bottom: 16px;
+    padding: 13px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progresso {
+    display: none;
+  }
+  .zap {
+    transition: none;
+  }
+}

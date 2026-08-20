@@ -1,41 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
+import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import "./nav.css";
 
 const LINKS = [
-  {
-    rotulo: "Serviços",
-    alvo: "#servicos",
-    nota: "Identidade, conteúdo e tráfego",
-    img: "/images/marca.png",
-  },
-  {
-    rotulo: "Método",
-    alvo: "#metodo",
-    nota: "Como a gente entra na sua operação",
-    img: "/images/consultoria.png",
-  },
-  {
-    rotulo: "Portfólio",
-    alvo: "#portfolio",
-    nota: "Marcas que já passaram por aqui",
-    img: "/images/outdoor.png",
-  },
-  {
-    rotulo: "Planos",
-    alvo: "#planos",
-    nota: "Valor fechado, escopo no papel",
-    img: "/images/papel.png",
-  },
-  {
-    rotulo: "Contato",
-    alvo: "#contato",
-    nota: "Resposta no mesmo dia útil",
-    img: "/images/estudio.png",
-  },
+  { rotulo: "Serviços", alvo: "#servicos" },
+  { rotulo: "Método", alvo: "#metodo" },
+  { rotulo: "Portfólio", alvo: "#portfolio" },
+  { rotulo: "Planos", alvo: "#planos" },
 ];
 
 type Props = {
@@ -44,151 +17,124 @@ type Props = {
 };
 
 /**
- * Topo com marca e botão. Os links moram numa cortina de tela cheia, então o
- * hero começa limpo e a navegação não rouba a primeira linha do título.
+ * Barra de navegação.
+ *
+ * Uma linha só no desktop, com a seção em que a pessoa está marcada pelo grifo.
+ * No celular vira um painel curto, aberto pelo botão. A barra ganha fundo
+ * sólido assim que a página sai do topo, senão os links somem sobre a foto.
  */
 export default function Nav({ aoIr, aoAbrirContato }: Props) {
   const [aberto, setAberto] = useState(false);
-  const [sobre, setSobre] = useState(0);
-  const cortina = useRef<HTMLDivElement>(null);
-  const tl = useRef<gsap.core.Timeline | null>(null);
+  const [rolou, setRolou] = useState(false);
+  const [ativo, setAtivo] = useState("");
 
-  // A timeline nasce uma vez e depois só toca para frente ou para trás.
-  // Recriar a cada abertura perderia o estado do meio e travaria a animação.
+  // IntersectionObserver em vez de listener de scroll: o navegador avisa, não
+  // precisamos recalcular a cada quadro.
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      tl.current = gsap
-        .timeline({ paused: true, defaults: { ease: "power4.out" } })
-        .fromTo(
-          ".cortina__item",
-          { y: 70, autoAlpha: 0 },
-          { y: 0, autoAlpha: 1, duration: 0.65, stagger: 0.055 },
-          0.16,
-        )
-        .fromTo(
-          ".cortina__pe",
-          { opacity: 0, y: 14 },
-          { opacity: 1, y: 0, duration: 0.45 },
-          0.36,
-        );
-    }, cortina);
-    return () => ctx.revert();
+    const secoes = LINKS.map((l) => document.querySelector(l.alvo)).filter(
+      Boolean,
+    ) as Element[];
+
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        const visivel = entradas
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visivel) setAtivo(`#${visivel.target.id}`);
+      },
+      { rootMargin: "-45% 0px -45% 0px", threshold: [0, 0.2, 0.6] },
+    );
+    secoes.forEach((s) => observador.observe(s));
+
+    const topo = document.querySelector("#inicio");
+    const sentinela = new IntersectionObserver(
+      ([e]) => setRolou(!e.isIntersecting),
+      { rootMargin: "-72px 0px 0px 0px" },
+    );
+    if (topo) sentinela.observe(topo);
+
+    return () => {
+      observador.disconnect();
+      sentinela.disconnect();
+    };
   }, []);
 
   useEffect(() => {
-    if (aberto) {
-      tl.current?.play();
-      document.body.style.touchAction = "none";
-    } else {
-      tl.current?.reverse();
-      document.body.style.touchAction = "";
-    }
-    return () => {
-      document.body.style.touchAction = "";
-    };
-  }, [aberto]);
-
-  useEffect(() => {
     const tecla = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && aberto) setAberto(false);
+      if (e.key === "Escape") setAberto(false);
     };
     addEventListener("keydown", tecla);
     return () => removeEventListener("keydown", tecla);
-  }, [aberto]);
+  }, []);
 
   const ir = (alvo: string) => {
     setAberto(false);
-    // Espera a cortina subir. Rolar antes deixa a página se mexendo por trás
-    // de um painel que ainda está fechando.
-    setTimeout(() => aoIr(alvo), 420);
+    aoIr(alvo);
   };
 
   return (
-    <>
-      <header className="topo">
+    <header className={`nav ${rolou ? "nav--solida" : ""}`}>
+      <div className="nav__interno">
         <button
-          className="topo__marca"
-          onClick={() => aoIr("#inicio")}
+          className="nav__marca"
+          onClick={() => ir("#inicio")}
           aria-label="Íntegra, início"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/integra-logo.png" alt="" aria-hidden />
-          <span className="topo__marcaTexto">ÍNTEGRA</span>
+          <span>ÍNTEGRA</span>
         </button>
 
-        <button
-          className="topo__menu"
-          onClick={() => setAberto((v) => !v)}
-          aria-expanded={aberto}
-          aria-controls="cortina-menu"
-        >
-          <span>{aberto ? "Fechar" : "Menu"}</span>
-          {aberto ? <X size={17} /> : <Menu size={17} />}
-        </button>
-      </header>
+        <nav className="nav__links" aria-label="Seções">
+          {LINKS.map((l) => (
+            <button
+              key={l.alvo}
+              className={`nav__link ${ativo === l.alvo ? "esta-aqui" : ""}`}
+              onClick={() => ir(l.alvo)}
+              aria-current={ativo === l.alvo ? "true" : undefined}
+            >
+              {l.rotulo}
+            </button>
+          ))}
+        </nav>
 
-      <div
-        className={`cortina ${aberto ? "cortina--aberta" : ""}`}
-        id="cortina-menu"
-        ref={cortina}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Navegação"
-        aria-hidden={!aberto}
-        inert={!aberto}
-      >
-        <div className="cortina__corpo">
-          <nav className="cortina__lista">
-            {LINKS.map((l, i) => (
-              <div className="cortina__slot" key={l.alvo}>
-                <button
-                  className={`cortina__item ${sobre === i ? "esta-sobre" : ""}`}
-                  onClick={() => ir(l.alvo)}
-                  onMouseEnter={() => setSobre(i)}
-                  onFocus={() => setSobre(i)}
-                >
-                  <span className="cortina__rot">{l.rotulo}</span>
-                  <span className="cortina__nota">{l.nota}</span>
-                </button>
-              </div>
-            ))}
-          </nav>
-
-          {/* Prévia que troca com o item sob o cursor: adianta o que a pessoa
-              vai encontrar lá embaixo e dá corpo ao painel. */}
-          <div className="cortina__previa" aria-hidden>
-            {LINKS.map((l, i) => (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                key={l.alvo}
-                src={l.img}
-                alt=""
-                className={sobre === i ? "ativa" : ""}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="cortina__pe">
-          <button
-            className="botao"
-            onClick={() => {
-              setAberto(false);
-              setTimeout(aoAbrirContato, 420);
-            }}
-          >
+        <div className="nav__acoes">
+          <button type="button" className="botao nav__cta" onClick={aoAbrirContato}>
             Falar com a Íntegra
           </button>
-          <a
-            className="cortina__insta"
-            href="https://www.instagram.com/integra.marketing"
-            target="_blank"
-            rel="noreferrer noopener"
+          <button
+            className="nav__hamburguer"
+            onClick={() => setAberto((v) => !v)}
+            aria-expanded={aberto}
+            aria-controls="nav-painel"
+            aria-label={aberto ? "Fechar menu" : "Abrir menu"}
           >
-            @integra.marketing
-          </a>
+            {aberto ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
       </div>
-    </>
+
+      <div
+        className={`nav__painel ${aberto ? "nav__painel--aberto" : ""}`}
+        id="nav-painel"
+        inert={!aberto}
+      >
+        {LINKS.map((l) => (
+          <button key={l.alvo} onClick={() => ir(l.alvo)}>
+            {l.rotulo}
+          </button>
+        ))}
+        <button
+          type="button"
+          className="botao"
+          onClick={() => {
+            setAberto(false);
+            aoAbrirContato();
+          }}
+        >
+          Falar com a Íntegra
+        </button>
+      </div>
+    </header>
   );
 }

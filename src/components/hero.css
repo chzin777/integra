@@ -1,13 +1,16 @@
-/* Capa. Ver Hero.tsx: título à esquerda, uma foto à direita. */
+/* Capa. Ver Hero.tsx: título à esquerda, carrossel à direita. */
 
 .hero {
   min-height: 100svh;
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
+  grid-template-columns: 1.1fr 1fr;
   align-items: center;
   gap: 5vw;
   padding: clamp(120px, 16vh, 180px) 6vw clamp(60px, 9vh, 110px);
   background: var(--fundo);
+  /* A perspectiva mora no pai: é ela que faz a moldura girar como um objeto
+     com volume quando o ponteiro passa, em vez de só escorregar. */
+  perspective: 1400px;
 }
 
 .hero__texto {
@@ -77,22 +80,77 @@
   flex-wrap: wrap;
 }
 
-.hero__foto {
+/* ---------- carrossel ---------- */
+
+.hero__palco {
   position: relative;
-  height: min(74vh, 660px);
+  height: min(74vh, 640px);
   border-radius: 22px;
   overflow: hidden;
   background: var(--fundo-alt);
+  transform-style: preserve-3d;
+  will-change: transform, clip-path;
 }
-/* A imagem é mais alta que a moldura para o parallax ter para onde correr sem
-   revelar borda. */
-.hero__foto img {
+
+.hero__palco img {
   position: absolute;
-  inset: -8% 0;
+  inset: 0;
   width: 100%;
-  height: 116%;
+  height: 100%;
   object-fit: cover;
-  will-change: transform;
+  opacity: 0;
+  /* A escala de repouso é maior que 1 para o parallax de ponteiro ter para
+     onde correr sem revelar borda. */
+  scale: 1.06;
+  transition: opacity 1s var(--curva);
+  will-change: transform, opacity;
+}
+.hero__palco img.ativa {
+  opacity: 1;
+}
+
+.hero__marcadores {
+  position: absolute;
+  z-index: 2;
+  left: 20px;
+  right: 20px;
+  bottom: 18px;
+  display: flex;
+  gap: 8px;
+}
+.hero__marcadores button {
+  flex: 1 1 0;
+  height: 22px;
+  border: 0;
+  background: none;
+  padding: 0;
+  display: flex;
+  align-items: flex-end;
+}
+/* A barrinha é o traço; a que está ativa se preenche no tempo do intervalo,
+   então dá para saber quanto falta para a próxima foto. */
+.hero__marcadores i {
+  display: block;
+  width: 100%;
+  height: 3px;
+  border-radius: 100px;
+  background: rgba(247, 247, 245, 0.42);
+  transform-origin: left center;
+}
+.hero__marcadores .ativo i {
+  background: var(--amarelo);
+  animation-name: hero-preenche;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes hero-preenche {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }
 
 @media (max-width: 900px) {
@@ -110,13 +168,29 @@
     width: 100%;
     gap: 10px;
   }
-  .hero__foto {
+  .hero__palco {
     height: 46vh;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__foto img {
+  .hero__palco,
+  .hero__palco img {
     transform: none !important;
+    clip-path: none !important;
+    opacity: 1;
   }
+  .hero__palco img:not(.ativa) {
+    opacity: 0;
+  }
+  .hero__marcadores .ativo i {
+    animation: none;
+    transform: scaleX(1);
+  }
+}
+
+/* Com o ponteiro dentro, o carrossel para: a barrinha para junto, senão o
+   traço continua correndo para uma foto que não vai trocar. */
+.hero__palco:hover .hero__marcadores .ativo i {
+  animation-play-state: paused;
 }

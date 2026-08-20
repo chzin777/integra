@@ -13,6 +13,7 @@ import Planos from "./Planos";
 import Depoimentos from "./Depoimentos";
 import CtaFinal from "./CtaFinal";
 import ModalContato from "./ModalContato";
+import Flutuante from "./Flutuante";
 import "./sections.css";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -24,6 +25,22 @@ export default function Site() {
   useEffect(() => {
     const ctx = gsap.context(() => {
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      // O grifo é pintado quando a palavra entra na tela. A classe no <html>
+      // liga o comportamento; sem JS o grifo já vem pronto.
+      document.documentElement.classList.add("grifo-animado");
+      gsap.utils.toArray<HTMLElement>("em").forEach((palavra) =>
+        ScrollTrigger.create({
+          trigger: palavra,
+          start: "top 88%",
+          once: true,
+          onEnter: () => {
+            // Espera a linha do título terminar de subir, senão a caneta passa
+            // antes de a palavra existir.
+            gsap.delayedCall(0.35, () => palavra.classList.add("grifado"));
+          },
+        }),
+      );
 
       // Entrada dos blocos: hierarquia. O olho chega no título antes do texto.
       gsap.utils.toArray<HTMLElement>(".entra").forEach((el) =>
@@ -83,6 +100,8 @@ export default function Site() {
         <Depoimentos />
         <CtaFinal aoAbrirContato={abrir} />
       </main>
+
+      <Flutuante />
 
       <ModalContato aberto={contato} aoFechar={() => setContato(false)} />
     </div>
