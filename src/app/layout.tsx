@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Manrope } from "next/font/google";
+import { Fraunces, Manrope } from "next/font/google";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
+// Serifa suave e editorial: dá o ar de portfólio acolhedor. Optical size alta
+// para os títulos ficarem elegantes e o itálico serve de destaque (grifo).
+const display = Fraunces({
   variable: "--fonte-display",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
+  style: ["normal", "italic"],
 });
 
 const corpo = Manrope({

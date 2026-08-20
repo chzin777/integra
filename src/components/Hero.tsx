@@ -16,7 +16,8 @@ const FOTOS = [
   { src: "/images/outdoor.png", alt: "Fachada com painel amarelo ao anoitecer" },
 ];
 
-const INTERVALO = 4500;
+const CHIPS = ["Identidade", "Conteúdo", "Tráfego pago"];
+const INTERVALO = 4200;
 
 type Props = {
   aoIr: (alvo: string) => void;
@@ -24,11 +25,10 @@ type Props = {
 };
 
 /**
- * Capa: título à esquerda, carrossel à direita.
- *
- * O carrossel passa sozinho porque o trabalho é o argumento: quem chega vê
- * cinco peças antes de rolar. Ele para no hover e com o ponteiro dentro, para
- * a pessoa conseguir olhar uma foto sem correr atrás dela.
+ * Capa em profundidade: título à esquerda, cena 3D à direita. Duas fotos em
+ * planos de Z diferentes, uma aura amarela ao fundo e etiquetas flutuantes.
+ * Tudo se move em velocidades distintas no ponteiro e na rolagem — parallax de
+ * verdade, com perspectiva no pai, para dar volume em vez de só deslizar.
  */
 export default function Hero({ aoIr, aoAbrirContato }: Props) {
   const raiz = useRef<HTMLElement>(null);
@@ -49,104 +49,117 @@ export default function Hero({ aoIr, aoAbrirContato }: Props) {
     const ctx = gsap.context(() => {
       if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
+      // Entrada: rótulo, título linha a linha, apoio, e a cena que "recua".
       gsap
         .timeline({ defaults: { ease: "power4.out" } })
         .from(".hero__rotulo", { y: 16, opacity: 0, duration: 0.6 })
         .from(
           ".hero__linha > span",
-          { yPercent: 116, duration: 0.9, stagger: 0.08 },
+          { yPercent: 118, duration: 0.95, stagger: 0.09 },
           "-=0.3",
         )
         .from(
           ".hero__apoio > *",
           { y: 18, opacity: 0, duration: 0.6, stagger: 0.08 },
-          "-=0.5",
+          "-=0.55",
         )
-        // A moldura abre: começa recortada por dentro e cresce até o tamanho
-        // cheio enquanto a foto desamplia. Dá a sensação de recuar a câmera.
-        .fromTo(
-          ".hero__palco",
-          { clipPath: "inset(14% 16% 14% 16% round 22px)", opacity: 0 },
+        .from(
+          ".hero__card",
           {
-            clipPath: "inset(0% 0% 0% 0% round 22px)",
-            opacity: 1,
-            duration: 1.4,
+            yPercent: 12,
+            opacity: 0,
+            rotateY: -12,
+            duration: 1.3,
+            stagger: 0.14,
           },
-          "-=1.05",
+          "-=1",
         )
-        .from(".hero__palco img", { scale: 1.22, duration: 1.6 }, "<");
+        .fromTo(
+          ".hero__card img",
+          { scale: 1.25 },
+          { scale: 1.06, duration: 1.5 },
+          "<",
+        )
+        .from(
+          ".hero__chip, .hero__selo, .hero__nota",
+          { scale: 0.6, opacity: 0, duration: 0.7, stagger: 0.08 },
+          "-=0.9",
+        );
 
-      // `ease:'none'` com scrub: qualquer curva por cima descola a imagem do
-      // dedo de quem rola.
-      gsap.fromTo(
-        ".hero__palco",
-        { yPercent: -3 },
-        {
-          yPercent: 3,
-          ease: "none",
-          scrollTrigger: {
-            trigger: raiz.current,
-            start: "top top",
-            end: "bottom top",
-            scrub: true,
+      const cena = raiz.current!.querySelector<HTMLElement>(".hero__cena")!;
+
+      // Parallax de rolagem: cada plano num ritmo. `ease:'none'` + scrub para a
+      // imagem não descolar do dedo de quem rola.
+      const scroll = (sel: string, from: number, to: number) =>
+        gsap.fromTo(
+          sel,
+          { yPercent: from },
+          {
+            yPercent: to,
+            ease: "none",
+            scrollTrigger: {
+              trigger: raiz.current,
+              start: "top top",
+              end: "bottom top",
+              scrub: true,
+            },
           },
-        },
-      );
+        );
+      scroll(".hero__aura", -8, 22);
+      scroll(".hero__card--um", -2, 8);
+      scroll(".hero__card--dois", -6, 18);
+      scroll(".hero__chip", 4, -16);
 
-      // Parallax de ponteiro. `quickTo` reusa o mesmo tween: pointermove
-      // dispara dezenas de vezes por segundo e um tween por evento seria
-      // desperdício. A foto anda mais que a moldura, então o quadro parece uma
-      // janela e não um adesivo.
-      const palco = raiz.current!.querySelector<HTMLElement>(".hero__palco")!;
-      const giroX = gsap.quickTo(palco, "rotateY", {
-        duration: 0.8,
-        ease: "power3",
-      });
-      const giroY = gsap.quickTo(palco, "rotateX", {
-        duration: 0.8,
-        ease: "power3",
-      });
-      const fotoX = gsap.quickTo(".hero__palco img", "xPercent", {
-        duration: 0.9,
-        ease: "power3",
-      });
-      const fotoY = gsap.quickTo(".hero__palco img", "yPercent", {
-        duration: 0.9,
-        ease: "power3",
-      });
+      // Parallax de ponteiro. quickTo reusa o tween: pointermove dispara dezenas
+      // de vezes por segundo. Cada plano anda uma quantidade diferente, então a
+      // cena parece ter profundidade, não um adesivo.
+      const q = (t: gsap.TweenTarget, p: string) =>
+        gsap.quickTo(t, p, { duration: 0.8, ease: "power3" });
+      const cenaX = q(cena, "rotateY");
+      const cenaY = q(cena, "rotateX");
+      const um = { x: q(".hero__card--um", "xPercent"), y: q(".hero__card--um", "yPercent") };
+      const dois = { x: q(".hero__card--dois", "xPercent"), y: q(".hero__card--dois", "yPercent") };
+      const aura = { x: q(".hero__aura", "xPercent"), y: q(".hero__aura", "yPercent") };
 
       const mover = (e: PointerEvent) => {
-        const r = palco.getBoundingClientRect();
+        const r = raiz.current!.getBoundingClientRect();
         const px = (e.clientX - r.left) / r.width - 0.5;
         const py = (e.clientY - r.top) / r.height - 0.5;
-        giroX(px * 7);
-        giroY(py * -5);
-        fotoX(px * -3.5);
-        fotoY(py * -3.5);
+        cenaX(px * 10);
+        cenaY(py * -8);
+        um.x(px * -4);
+        um.y(py * -4);
+        dois.x(px * -9);
+        dois.y(py * -9);
+        aura.x(px * 6);
+        aura.y(py * 6);
       };
       const sair = () => {
-        giroX(0);
-        giroY(0);
-        fotoX(0);
-        fotoY(0);
+        cenaX(0); cenaY(0);
+        um.x(0); um.y(0);
+        dois.x(0); dois.y(0);
+        aura.x(0); aura.y(0);
       };
 
       const mm = matchMedia("(hover: hover) and (pointer: fine)");
+      const alvo = raiz.current!;
       const ligar = () => {
         if (mm.matches) {
-          palco.addEventListener("pointermove", mover);
-          palco.addEventListener("pointerleave", sair);
+          alvo.addEventListener("pointermove", mover);
+          alvo.addEventListener("pointerleave", sair);
         } else {
-          palco.removeEventListener("pointermove", mover);
-          palco.removeEventListener("pointerleave", sair);
+          alvo.removeEventListener("pointermove", mover);
+          alvo.removeEventListener("pointerleave", sair);
         }
       };
       ligar();
       mm.addEventListener("change", ligar);
 
+      document.fonts?.ready.then(() => ScrollTrigger.refresh());
+
       return () => {
-        palco.removeEventListener("pointermove", mover);
-        palco.removeEventListener("pointerleave", sair);
+        alvo.removeEventListener("pointermove", mover);
+        alvo.removeEventListener("pointerleave", sair);
         mm.removeEventListener("change", ligar);
       };
     }, raiz);
@@ -154,8 +167,12 @@ export default function Hero({ aoIr, aoAbrirContato }: Props) {
     return () => ctx.revert();
   }, []);
 
+  const proxima = (atual + 1) % FOTOS.length;
+
   return (
     <section className="hero" id="inicio" ref={raiz}>
+      <div className="hero__aura" aria-hidden />
+
       <div className="hero__texto">
         <p className="hero__rotulo">
           <i />
@@ -195,37 +212,86 @@ export default function Hero({ aoIr, aoAbrirContato }: Props) {
       </div>
 
       <div
-        className="hero__palco"
+        className="hero__cena"
         onMouseEnter={() => setParado(true)}
         onMouseLeave={() => setParado(false)}
       >
-        {/* Pilha de imagens em vez de trocar o `src`: trocar dá flash branco. */}
-        {FOTOS.map((f, i) => (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            key={f.src}
-            src={f.src}
-            alt={i === atual ? f.alt : ""}
-            aria-hidden={i !== atual}
-            className={i === atual ? "ativa" : ""}
-          />
+        {/* Carta de fundo: plano mais profundo, mostra a próxima foto. */}
+        <figure className="hero__card hero__card--dois" aria-hidden>
+          {FOTOS.map((f, i) => (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img key={f.src} src={f.src} alt="" className={i === proxima ? "ativa" : ""} />
+          ))}
+        </figure>
+
+        {/* Carta da frente: foto principal em rotação. */}
+        <figure className="hero__card hero__card--um">
+          {FOTOS.map((f, i) => (
+            /* eslint-disable-next-line @next/next/no-img-element */
+            <img
+              key={f.src}
+              src={f.src}
+              alt={i === atual ? f.alt : ""}
+              aria-hidden={i !== atual}
+              className={i === atual ? "ativa" : ""}
+            />
+          ))}
+
+          <div className="hero__marcadores" role="tablist" aria-label="Fotos">
+            {FOTOS.map((f, i) => (
+              <button
+                key={f.src}
+                role="tab"
+                aria-selected={i === atual}
+                aria-label={`Foto ${i + 1} de ${FOTOS.length}`}
+                className={i === atual ? "ativo" : ""}
+                onClick={() => setAtual(i)}
+              >
+                <i style={{ animationDuration: `${INTERVALO}ms` }} />
+              </button>
+            ))}
+          </div>
+        </figure>
+
+        {/* Selo amarelo girando: assinatura da marca. */}
+        <div className="hero__selo" aria-hidden>
+          <svg viewBox="0 0 100 100">
+            <defs>
+              <path
+                id="hero-circulo"
+                d="M50,50 m-34,0 a34,34 0 1,1 68,0 a34,34 0 1,1 -68,0"
+              />
+            </defs>
+            <text>
+              <textPath href="#hero-circulo">
+                ÍNTEGRA · CONSULTORIA DE MARKETING ·
+              </textPath>
+            </text>
+          </svg>
+          <span className="hero__selo-nucleo">✳</span>
+        </div>
+
+        {/* Etiquetas flutuantes das frentes de trabalho. */}
+        {CHIPS.map((c, i) => (
+          <span key={c} className={`hero__chip hero__chip--${i + 1}`} aria-hidden>
+            {c}
+          </span>
         ))}
 
-        <div className="hero__marcadores" role="tablist" aria-label="Fotos">
-          {FOTOS.map((f, i) => (
-            <button
-              key={f.src}
-              role="tab"
-              aria-selected={i === atual}
-              aria-label={`Foto ${i + 1} de ${FOTOS.length}`}
-              className={i === atual ? "ativo" : ""}
-              onClick={() => setAtual(i)}
-            >
-              <i style={{ animationDuration: `${INTERVALO}ms` }} />
-            </button>
-          ))}
-        </div>
+        <span className="hero__nota" aria-hidden>
+          Repertório vivo — {FOTOS.length} peças na rua
+        </span>
       </div>
+
+      <button
+        type="button"
+        className="hero__rolar"
+        onClick={() => aoIr("#servicos")}
+        aria-label="Rolar para os serviços"
+      >
+        <span>Role</span>
+        <ArrowDown size={15} />
+      </button>
     </section>
   );
 }

@@ -1,19 +1,49 @@
-/* Capa. Ver Hero.tsx: título à esquerda, carrossel à direita. */
+/* Capa em profundidade. Ver Hero.tsx: título à esquerda, cena 3D à direita. */
 
 .hero {
+  position: relative;
   min-height: 100svh;
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: 1.05fr 1fr;
   align-items: center;
   gap: 5vw;
-  padding: clamp(120px, 16vh, 180px) 6vw clamp(60px, 9vh, 110px);
+  padding: clamp(120px, 16vh, 180px) 6vw clamp(70px, 10vh, 120px);
   background: var(--fundo);
-  /* A perspectiva mora no pai: é ela que faz a moldura girar como um objeto
-     com volume quando o ponteiro passa, em vez de só escorregar. */
-  perspective: 1400px;
+  overflow: hidden;
+  /* A perspectiva mora no pai: é ela que dá volume à cena quando o ponteiro
+     passa, em vez de os planos só escorregarem. */
+  perspective: 1500px;
+}
+
+/* Aura amarela difusa ao fundo: o brilho da marca, plano mais profundo. */
+.hero__aura {
+  position: absolute;
+  z-index: 0;
+  top: 50%;
+  right: -6%;
+  width: min(58vw, 720px);
+  aspect-ratio: 1;
+  translate: 0 -50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 212, 0, 0.55),
+    rgba(255, 212, 0, 0.16) 46%,
+    transparent 70%
+  );
+  filter: blur(30px);
+  pointer-events: none;
+  will-change: transform;
+  animation: hero-pulsa 9s var(--curva) infinite;
+}
+@keyframes hero-pulsa {
+  0%, 100% { scale: 1; opacity: 0.9; }
+  50% { scale: 1.08; opacity: 1; }
 }
 
 .hero__texto {
+  position: relative;
+  z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -26,6 +56,7 @@
   align-items: center;
   gap: 12px;
   margin: 0;
+  font-family: var(--fonte-corpo), sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.22em;
@@ -40,20 +71,19 @@
 }
 
 .hero h1 {
-  /* `min(vw, vh)`: em tela baixa e larga, o vw sozinho estoura a altura. */
-  font-size: clamp(40px, min(6.4vw, 11vh), 104px);
-  font-weight: 600;
-  line-height: 0.98;
-  letter-spacing: -0.05em;
+  font-size: clamp(42px, min(6.6vw, 11vh), 108px);
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.02em;
   margin: 0;
   max-width: 14ch;
 }
-/* O recorte faz a linha subir de dentro do papel em vez de só aparecer. O
-   respiro embaixo é para o grifo do marca-texto não ser cortado. */
+/* Recorte faz a linha subir de dentro do papel. Respiro embaixo para o grifo
+   do marca-texto não ser cortado. */
 .hero__linha {
   display: block;
   overflow: hidden;
-  padding-bottom: 0.12em;
+  padding-bottom: 0.14em;
 }
 .hero__linha > span {
   display: block;
@@ -80,41 +110,143 @@
   flex-wrap: wrap;
 }
 
-/* ---------- carrossel ---------- */
+/* ---------- cena 3D ---------- */
 
-.hero__palco {
+.hero__cena {
   position: relative;
-  height: min(74vh, 640px);
-  border-radius: 22px;
-  overflow: hidden;
-  background: var(--fundo-alt);
+  z-index: 1;
+  height: min(76vh, 660px);
   transform-style: preserve-3d;
-  will-change: transform, clip-path;
+  will-change: transform;
 }
 
-.hero__palco img {
+.hero__card {
+  position: absolute;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--fundo-alt);
+  box-shadow: 0 40px 80px -40px rgba(26, 25, 19, 0.55);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.hero__card img {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   opacity: 0;
-  /* A escala de repouso é maior que 1 para o parallax de ponteiro ter para
-     onde correr sem revelar borda. */
   scale: 1.06;
-  transition: opacity 1s var(--curva);
+  transition: opacity 0.9s var(--curva);
   will-change: transform, opacity;
 }
-.hero__palco img.ativa {
+.hero__card img.ativa {
   opacity: 1;
 }
 
+/* Carta da frente: maior, ligeiramente girada, mais perto do olho. */
+.hero__card--um {
+  inset: 8% 4% 8% 14%;
+  transform: translateZ(60px) rotateY(-5deg);
+}
+/* Carta de fundo: menor, empurrada para cima/direita, mais funda. */
+.hero__card--dois {
+  width: 44%;
+  aspect-ratio: 3 / 4;
+  top: -2%;
+  right: -2%;
+  transform: translateZ(-40px) rotateY(-8deg);
+  opacity: 0.96;
+}
+
+/* Selo circular amarelo girando: assinatura no canto inferior esquerdo. */
+.hero__selo {
+  position: absolute;
+  left: -3%;
+  bottom: 4%;
+  width: clamp(92px, 11vw, 128px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  transform: translateZ(90px);
+  z-index: 3;
+}
+.hero__selo svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: var(--tinta);
+  animation: hero-gira 18s linear infinite;
+}
+.hero__selo text {
+  font-family: var(--fonte-corpo), sans-serif;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.hero__selo-nucleo {
+  width: 62%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--amarelo);
+  color: var(--fundo-forte);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  box-shadow: 0 10px 24px -10px rgba(255, 212, 0, 0.9);
+}
+@keyframes hero-gira {
+  to { rotate: 360deg; }
+}
+
+/* Etiquetas flutuantes: as frentes de trabalho pairando na cena. */
+.hero__chip {
+  position: absolute;
+  z-index: 3;
+  padding: 9px 16px;
+  border-radius: 100px;
+  background: rgba(245, 242, 234, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--linha);
+  font-family: var(--fonte-corpo), sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--tinta);
+  white-space: nowrap;
+  box-shadow: 0 18px 36px -22px rgba(26, 25, 19, 0.6);
+  will-change: transform;
+}
+.hero__chip--1 { top: 6%; left: 2%; transform: translateZ(120px); animation: hero-boia 6s var(--curva) infinite; }
+.hero__chip--2 { top: 40%; right: -6%; transform: translateZ(120px); animation: hero-boia 7s var(--curva) infinite 0.6s; }
+.hero__chip--3 { bottom: 20%; left: 20%; transform: translateZ(120px); animation: hero-boia 6.5s var(--curva) infinite 1.2s; }
+@keyframes hero-boia {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -10px; }
+}
+
+.hero__nota {
+  position: absolute;
+  right: 2%;
+  bottom: -2%;
+  z-index: 3;
+  font-family: var(--fonte-corpo), sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--texto-fraco);
+  transform: translateZ(70px);
+}
+
+/* ---------- marcadores do carrossel ---------- */
+
 .hero__marcadores {
   position: absolute;
-  z-index: 2;
-  left: 20px;
-  right: 20px;
-  bottom: 18px;
+  z-index: 4;
+  left: 18px;
+  right: 18px;
+  bottom: 16px;
   display: flex;
   gap: 8px;
 }
@@ -127,14 +259,12 @@
   display: flex;
   align-items: flex-end;
 }
-/* A barrinha é o traço; a que está ativa se preenche no tempo do intervalo,
-   então dá para saber quanto falta para a próxima foto. */
 .hero__marcadores i {
   display: block;
   width: 100%;
   height: 3px;
   border-radius: 100px;
-  background: rgba(247, 247, 245, 0.42);
+  background: rgba(247, 245, 238, 0.42);
   transform-origin: left center;
 }
 .hero__marcadores .ativo i {
@@ -143,54 +273,80 @@
   animation-timing-function: linear;
   animation-fill-mode: forwards;
 }
-
 @keyframes hero-preenche {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.hero__cena:hover .hero__marcadores .ativo i {
+  animation-play-state: paused;
+}
+
+/* Pista de rolagem. */
+.hero__rolar {
+  position: absolute;
+  z-index: 2;
+  left: 6vw;
+  bottom: clamp(24px, 5vh, 48px);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: none;
+  padding: 0;
+  font-family: var(--fonte-corpo), sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+.hero__rolar svg {
+  animation: hero-desce 1.8s var(--curva) infinite;
+}
+@keyframes hero-desce {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(5px); opacity: 1; }
 }
 
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;
-    gap: 34px;
-    padding: 104px 20px 60px;
+    gap: 40px;
+    padding: 104px 20px 80px;
     min-height: auto;
   }
   .hero h1 {
-    font-size: 12vw;
+    font-size: 13vw;
     max-width: none;
   }
   .hero__acoes {
     width: 100%;
     gap: 10px;
   }
-  .hero__palco {
-    height: 46vh;
+  .hero__cena {
+    height: 60vh;
   }
+  .hero__card--dois { display: none; }
+  .hero__card--um { inset: 0; transform: none; }
+  .hero__chip--2 { right: 2%; }
+  .hero__nota { display: none; }
+  .hero__rolar { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__palco,
-  .hero__palco img {
+  .hero__aura,
+  .hero__selo svg,
+  .hero__chip,
+  .hero__rolar svg {
+    animation: none !important;
+  }
+  .hero__cena,
+  .hero__card,
+  .hero__card img {
     transform: none !important;
-    clip-path: none !important;
-    opacity: 1;
   }
-  .hero__palco img:not(.ativa) {
-    opacity: 0;
-  }
-  .hero__marcadores .ativo i {
-    animation: none;
-    transform: scaleX(1);
-  }
-}
-
-/* Com o ponteiro dentro, o carrossel para: a barrinha para junto, senão o
-   traço continua correndo para uma foto que não vai trocar. */
-.hero__palco:hover .hero__marcadores .ativo i {
-  animation-play-state: paused;
+  .hero__card--um { inset: 0; }
+  .hero__card--dois { display: none; }
+  .hero__card img.ativa { opacity: 1; }
+  .hero__marcadores .ativo i { animation: none; transform: scaleX(1); }
 }

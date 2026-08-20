@@ -1,0 +1,430 @@
+/* ============================================================
+   Íntegra — v2. Identidade real da marca (Instagram): preto +
+   dourado em gradiente, serifa elegante, fundo escuro e vivo, com
+   parallax. Escopo preso em .v2.
+   ============================================================ */
+
+.v2 {
+  --preto: #100e0b;
+  --preto-2: #1a1712;
+  --preto-3: #232019;
+  --tinta: #f4ecda;
+  --tinta-fraca: rgba(244, 236, 218, 0.6);
+  --ouro: #e9b44c;
+  --ouro-claro: #ffe08a;
+  --ouro-fundo: #e6892f;
+  --grad-ouro: linear-gradient(115deg, #ffe08a 0%, #f5b642 42%, #e6892f 100%);
+  --linha: rgba(244, 236, 218, 0.13);
+  --curva: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  min-height: 100vh;
+  color-scheme: dark;
+  background: var(--preto);
+  color: var(--tinta);
+  font-family: var(--v2-corpo), system-ui, sans-serif;
+  font-weight: 400;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+.v2 ::selection { background: var(--ouro); color: var(--preto); }
+.v2 :focus-visible { outline: 2px solid var(--ouro); outline-offset: 3px; }
+
+/* Tema claro: papel quente, tinta escura, o mesmo ouro vivo. */
+.v2--claro {
+  --preto: #f4eee1;
+  --preto-2: #ebe3d3;
+  --preto-3: #e0d6c2;
+  --tinta: #2a2519;
+  --tinta-fraca: rgba(42, 37, 25, 0.6);
+  --linha: rgba(42, 37, 25, 0.15);
+  color-scheme: light;
+}
+.v2--claro .v2nav--on { background: rgba(244, 238, 225, 0.8); }
+.v2--claro .v2__grao { opacity: 0.045; }
+
+.v2__grao {
+  position: fixed; inset: 0; z-index: 90; pointer-events: none; opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.v2 h1, .v2 h2, .v2 h3 {
+  font-family: var(--v2-display), Georgia, serif;
+  font-weight: 400; letter-spacing: 0; margin: 0;
+}
+/* Destaque em ouro-gradiente: a cor viva da marca dentro do texto. */
+.v2 em {
+  position: static;
+  display: inline;
+  isolation: auto;
+  padding: 0;
+  font-style: italic;
+  font-family: var(--v2-display), Georgia, serif;
+  /* Gradiente simétrico (extremos = mesma cor) + shift de exatamente um tile:
+     loop perfeitamente contínuo, sem "teleporte". */
+  background: linear-gradient(115deg, #e6892f, #ffe08a, #e6892f);
+  background-size: 200% auto;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: v2brilho 6s linear infinite;
+}
+@keyframes v2brilho {
+  from { background-position: 0% center; }
+  to { background-position: -200% center; }
+}
+/* Anula o marca-texto amarelo global (globals.css) que vazava no /v2 e
+   cobria a palavra dourada com um bloco sólido. */
+.v2 em::before { content: none; display: none; }
+
+.v2rot {
+  margin: 0; font-family: var(--v2-corpo), sans-serif;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ouro); display: inline-flex; align-items: center; gap: 12px;
+}
+.v2rot::before { content: ""; width: 26px; height: 1px; background: var(--grad-ouro); }
+
+.v2big {
+  font-size: clamp(32px, 4.8vw, 72px); line-height: 1.05; letter-spacing: -0.01em;
+  max-width: 20ch; margin: 18px 0 clamp(40px, 5vw, 72px);
+}
+
+/* ---------- botões ---------- */
+.v2btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 15px 27px; border: 0; border-radius: 100px;
+  background: var(--grad-ouro); color: #2a1c05;
+  font-family: var(--v2-corpo), sans-serif; font-weight: 700; font-size: 15px; cursor: pointer;
+  transition: transform 0.35s var(--curva), box-shadow 0.35s var(--curva);
+  box-shadow: 0 16px 40px -16px rgba(233, 180, 76, 0.5);
+}
+.v2btn:hover { transform: translateY(-2px); box-shadow: 0 26px 54px -18px rgba(233, 180, 76, 0.6); }
+.v2btn svg { transition: transform 0.35s var(--curva); }
+.v2btn:hover svg { transform: translateX(3px); }
+.v2btn--sm { padding: 10px 20px; font-size: 14px; }
+.v2btn--g { background: var(--grad-ouro); color: #2a1c05; }
+
+.v2ghost {
+  border: 1px solid rgba(233, 180, 76, 0.4); border-radius: 100px;
+  background: none; color: var(--tinta);
+  padding: 14px 24px; font: inherit; font-weight: 600; font-size: 15px; cursor: pointer;
+  transition: border-color 0.3s, background 0.3s, transform 0.3s var(--curva);
+}
+.v2ghost:hover { border-color: var(--ouro); background: rgba(233, 180, 76, 0.08); transform: translateY(-2px); }
+
+/* ---------- nav ---------- */
+.v2nav {
+  position: fixed; z-index: 70; inset: 0 0 auto 0; height: 76px;
+  padding: 0 clamp(20px, 5vw, 60px);
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+  transition: background 0.4s, border-color 0.4s, backdrop-filter 0.4s;
+  border-bottom: 1px solid transparent;
+}
+.v2nav--on {
+  background: rgba(16, 14, 11, 0.72);
+  backdrop-filter: blur(14px) saturate(150%); -webkit-backdrop-filter: blur(14px) saturate(150%);
+  border-bottom-color: var(--linha);
+}
+.v2nav__marca {
+  border: 0; background: var(--grad-ouro); -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent; cursor: pointer;
+  font-family: var(--v2-display), serif; font-size: 27px; font-weight: 600; letter-spacing: 0.02em;
+}
+.v2nav__links { display: flex; gap: 4px; }
+/* Cor por token: escura no tema claro, clara no escuro — sempre legível. */
+.v2nav__links button {
+  position: relative; border: 0; background: none; color: var(--tinta-fraca);
+  font-family: var(--v2-display), serif; font-size: 17px; letter-spacing: 0.01em;
+  padding: 8px 4px; margin: 0 10px; cursor: pointer;
+  transition: color 0.25s;
+}
+.v2nav__links button:hover { color: var(--tinta); }
+/* Sublinhado que varre da direita p/ esquerda (skiper40). */
+.v2nav__links button::before {
+  content: ""; position: absolute; left: 0; bottom: 2px; width: 100%; height: 1.5px; background: var(--grad-ouro);
+  transform-origin: right; transform: scaleX(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.v2nav__links button:hover::before { transform-origin: left; transform: scaleX(1); }
+.v2nav__acoes { display: flex; align-items: center; gap: 12px; }
+.v2tema {
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border: 1px solid var(--linha); border-radius: 50%; background: none;
+  color: var(--ouro); cursor: pointer;
+  transition: border-color 0.3s, transform 0.3s var(--curva), background 0.3s;
+}
+.v2tema:hover { border-color: var(--ouro); transform: rotate(-25deg); background: rgba(233, 180, 76, 0.08); }
+
+/* ---------- hero claro (split editorial) ---------- */
+.v2h {
+  position: relative; min-height: 100svh; overflow: hidden;
+  display: grid; grid-template-columns: 1.08fr 0.92fr; align-items: center;
+  gap: clamp(24px, 4vw, 60px);
+  padding: clamp(110px, 15vh, 180px) clamp(20px, 5vw, 60px) clamp(60px, 9vh, 110px);
+  background: var(--preto);
+  perspective: 1200px;
+}
+/* Brilho dourado difuso — vivacidade sobre o papel claro. */
+.v2h::before {
+  content: ""; position: absolute; z-index: 0; right: -6%; top: 18%;
+  width: 46vw; aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, rgba(233, 180, 76, 0.24), transparent 66%);
+  filter: blur(42px); pointer-events: none;
+}
+.v2h__texto {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: flex-start; gap: clamp(20px, 3vh, 34px);
+}
+.v2h__t { font-size: clamp(44px, 6.4vw, 104px); line-height: 1; letter-spacing: -0.02em; color: var(--tinta); }
+.v2h__linha { display: block; overflow: hidden; padding-bottom: 0.1em; }
+.v2h__linha > span { display: block; }
+.v2h__sub { margin: 0; max-width: 46ch; font-size: 17px; line-height: 1.7; color: var(--tinta-fraca); }
+.v2h__acoes { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+/* Botão principal em destaque: maior e com brilho dourado pulsando. */
+.v2h__acoes .v2btn {
+  padding: 18px 32px; font-size: 16px;
+  animation: v2pulso 2.8s var(--curva) infinite;
+}
+@keyframes v2pulso {
+  0%, 100% { box-shadow: 0 16px 40px -16px rgba(233, 180, 76, 0.5); }
+  50% { box-shadow: 0 18px 52px -14px rgba(233, 180, 76, 0.85); }
+}
+.v2h__acoes .v2ghost { opacity: 0.85; }
+.v2h__tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.v2h__tags span {
+  font-family: var(--v2-corpo), sans-serif; font-size: 12px; font-weight: 600;
+  letter-spacing: 0.02em; color: var(--tinta-fraca);
+  padding: 7px 14px; border: 1px solid var(--linha); border-radius: 100px;
+}
+
+/* Fotos emolduradas com profundidade 3D + parallax + desfoque de campo. */
+.v2h__mid { position: relative; z-index: 1; height: min(72vh, 600px); transform-style: preserve-3d; will-change: transform; }
+.v2h__foto {
+  position: absolute; margin: 0; overflow: hidden; border-radius: 16px;
+  border: 1px solid var(--linha); box-shadow: 0 50px 100px -50px rgba(0, 0, 0, 0.5);
+  will-change: transform;
+}
+.v2h__foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+/* Carta ao fundo: mais funda e levemente desfocada (depth of field). */
+.v2h__foto--a { inset: 2% 36% 14% 0; z-index: 1; filter: blur(0.8px) brightness(0.97); }
+.v2h__foto--b { width: 52%; aspect-ratio: 3 / 4; right: 0; bottom: 4%; z-index: 2; }
+.v2h__selo {
+  position: absolute; z-index: 3; left: 0; bottom: -2%;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border-radius: 100px; background: var(--grad-ouro); color: #2a1c05;
+  font-family: var(--v2-corpo), sans-serif; font-size: 12px; font-weight: 700; line-height: 1.2;
+  box-shadow: 0 18px 40px -16px rgba(233, 180, 76, 0.55);
+}
+.v2h__selo span { font-size: 16px; }
+
+/* ---------- cortina de entrada ---------- */
+.v2intro {
+  position: fixed; inset: 0; z-index: 200;
+  background: #100e0b; display: grid; place-items: center;
+}
+.v2intro span {
+  font-family: var(--v2-display), serif; font-style: italic; font-weight: 500;
+  font-size: clamp(48px, 9vw, 120px);
+  background: var(--grad-ouro); -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* ---------- seção base ---------- */
+.v2sec { padding: clamp(80px, 11vw, 160px) clamp(20px, 5vw, 60px); }
+
+/* ---------- sobre ---------- */
+.v2sobre__grade {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+  border-top: 1px solid var(--linha); padding-top: 44px;
+}
+.v2stat { display: flex; flex-direction: column; gap: 6px; }
+.v2stat strong {
+  font-family: var(--v2-display), serif; font-weight: 500; font-size: clamp(38px, 5vw, 64px); line-height: 1;
+  background: var(--grad-ouro); -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.v2stat span { font-size: 14px; color: var(--tinta-fraca); }
+
+/* ---------- serviços (cards) ---------- */
+.v2serv__cabeca { margin-bottom: clamp(40px, 5vw, 72px); }
+.v2serv__cabeca .v2rot { display: inline-flex; margin-bottom: 18px; }
+.v2serv__grade { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(16px, 2vw, 24px); }
+.v2serv__card {
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; gap: 12px;
+  padding: clamp(28px, 3vw, 44px);
+  min-height: clamp(200px, 22vw, 280px);
+  border: 1px solid var(--linha); border-radius: 18px; background: var(--preto);
+  transition: transform 0.5s var(--curva), box-shadow 0.5s var(--curva), border-color 0.4s;
+}
+.v2serv__card::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; opacity: 0;
+  background: radial-gradient(120% 120% at 100% 0%, rgba(233, 180, 76, 0.14), transparent 60%);
+  transition: opacity 0.5s;
+}
+.v2serv__card:hover {
+  transform: translateY(-6px); border-color: rgba(233, 180, 76, 0.4);
+  box-shadow: 0 34px 70px -44px rgba(0, 0, 0, 0.7);
+}
+.v2serv__card:hover::before { opacity: 1; }
+.v2serv__card > * { position: relative; z-index: 1; }
+.v2serv__card h3 { font-size: clamp(24px, 2.6vw, 36px); font-weight: 500; }
+.v2serv__card p { margin: 0; font-size: 15px; line-height: 1.65; color: var(--tinta-fraca); max-width: 42ch; }
+.v2serv__seta {
+  position: absolute; top: clamp(28px, 3vw, 44px); right: clamp(28px, 3vw, 44px);
+  color: var(--tinta-fraca); opacity: 0.5;
+  transition: transform 0.45s var(--curva), color 0.4s, opacity 0.4s;
+}
+.v2serv__card:hover .v2serv__seta { color: var(--ouro); opacity: 1; transform: translate(5px, -5px); }
+
+/* ---------- portfólio: parede parallax (skiper30) ---------- */
+.v2port { position: relative; }
+.v2port__cabeca {
+  padding: clamp(80px, 11vw, 150px) clamp(20px, 5vw, 60px) 0;
+}
+/* A parede: alta, recortada, colunas correndo em velocidades diferentes. */
+.v2wall {
+  position: relative; box-sizing: border-box;
+  display: flex; gap: 2vw; height: 175vh; overflow: hidden;
+  padding: 2vw; margin-top: clamp(30px, 5vw, 60px);
+  background: var(--preto-2);
+}
+.v2wall__col {
+  position: relative; flex: 1 1 0; min-width: 0;
+  display: flex; flex-direction: column; gap: 2vw; will-change: transform;
+}
+.v2wall__col img {
+  width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover;
+  border-radius: 12px; display: block; pointer-events: none;
+  filter: brightness(0.9) saturate(1.06);
+}
+
+@media (max-width: 760px) {
+  /* Parede de 4 colunas fica ilegível no celular: reduz e encurta. */
+  .v2wall { height: 130vh; gap: 3vw; padding: 3vw; }
+  .v2wall__col:nth-child(4) { display: none; }
+}
+
+/* ---------- depoimentos ---------- */
+.v2dep { background: var(--preto-2); }
+.v2dep .v2big { margin-bottom: clamp(56px, 7vw, 96px); }
+.v2dep__grade { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.v2fala {
+  margin: 0; position: relative; background: var(--preto);
+  border: 1px solid var(--linha); border-radius: 18px;
+  padding: 34px 30px 28px; display: flex; flex-direction: column; gap: 22px;
+  transition: transform 0.5s var(--curva), box-shadow 0.5s var(--curva), border-color 0.4s;
+}
+.v2fala:hover { transform: translateY(-5px); border-color: rgba(233, 180, 76, 0.34); box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9); }
+.v2fala__aspas {
+  font-family: var(--v2-display), serif; font-size: 76px; line-height: 0.3; height: 30px;
+  background: var(--grad-ouro); -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+.v2fala blockquote { margin: 0; font-family: var(--v2-display), serif; font-weight: 400; font-size: 23px; line-height: 1.4; }
+.v2fala figcaption { display: flex; flex-direction: column; gap: 2px; margin-top: auto; }
+.v2fala figcaption strong { font-family: var(--v2-corpo), sans-serif; font-weight: 600; font-size: 14px; }
+.v2fala figcaption span { font-size: 13px; color: var(--ouro); }
+
+/* ---------- CTA flutuante WhatsApp ---------- */
+.v2zap {
+  position: fixed; z-index: 95; right: clamp(16px, 3vw, 28px); bottom: clamp(16px, 3vw, 28px);
+  display: inline-flex; align-items: center; gap: 0;
+  width: 58px; height: 58px; padding: 0 16px; border-radius: 100px; overflow: hidden;
+  background: #25d366; color: #fff; text-decoration: none;
+  box-shadow: 0 14px 34px -10px rgba(37, 211, 102, 0.6);
+  transition: width 0.4s var(--curva), gap 0.4s var(--curva), transform 0.3s var(--curva);
+  animation: v2zappulse 2.6s var(--curva) infinite;
+}
+.v2zap svg { flex: 0 0 auto; }
+.v2zap__balao {
+  max-width: 0; opacity: 0; white-space: nowrap;
+  font-family: var(--v2-corpo), sans-serif; font-size: 14px; font-weight: 600;
+  transition: max-width 0.4s var(--curva), opacity 0.3s, margin 0.4s var(--curva);
+}
+.v2zap:hover {
+  width: 210px; gap: 10px; transform: translateY(-2px);
+}
+.v2zap:hover .v2zap__balao { max-width: 160px; opacity: 1; margin-left: 6px; }
+@keyframes v2zappulse {
+  0%, 100% { box-shadow: 0 14px 34px -10px rgba(37, 211, 102, 0.55); }
+  50% { box-shadow: 0 14px 44px -8px rgba(37, 211, 102, 0.9); }
+}
+@media (prefers-reduced-motion: reduce) { .v2zap { animation: none; } }
+
+/* ---------- footer sticky-reveal ---------- */
+/* A seção anterior desliza por cima e revela o rodapé fixo por baixo. */
+.v2ft { --ft-h: 660px; position: relative; height: var(--ft-h); width: 100%;
+  clip-path: polygon(0% 0, 100% 0%, 100% 100%, 0 100%); }
+.v2ft__fix { position: fixed; bottom: 0; height: var(--ft-h); width: 100%; }
+.v2ft__sticky { position: sticky; top: calc(100vh - var(--ft-h)); height: 100%; overflow-y: auto; }
+.v2ft__panel {
+  position: relative; overflow: hidden; min-height: 100%;
+  display: flex; flex-direction: column; justify-content: center;
+  background: var(--preto-2); color: var(--tinta);
+  border-top: 1px solid var(--linha);
+  padding: clamp(48px, 6vw, 84px) clamp(20px, 5vw, 60px) clamp(24px, 3vw, 40px);
+}
+.v2ft__aura {
+  position: absolute; z-index: 0; left: 8%; top: 30%;
+  width: min(52vw, 620px); aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle, rgba(233, 180, 76, 0.28), transparent 66%);
+  filter: blur(30px); pointer-events: none; will-change: transform;
+}
+.v2ft__panel > *:not(.v2ft__aura) { position: relative; z-index: 1; }
+.v2ft__topo {
+  display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(40px, 6vw, 90px);
+  align-items: start;
+}
+.v2ft__cta { display: flex; flex-direction: column; align-items: flex-start; gap: 22px; }
+.v2ft__t { font-size: clamp(30px, 4.4vw, 60px); line-height: 1.06; letter-spacing: -0.01em; max-width: 16ch; }
+.v2ft__botao { margin-top: 6px; }
+.v2ft__cols { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; padding-top: 8px; }
+.v2ft__col { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+.v2ft__rot {
+  font-family: var(--v2-corpo), sans-serif; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--ouro); margin-bottom: 4px;
+}
+.v2ft__link {
+  border: 0; background: none; padding: 0; cursor: pointer;
+  color: var(--tinta); font: inherit; font-size: 16px; font-weight: 500;
+  transition: color 0.25s; text-align: left;
+}
+.v2ft__link:hover { color: var(--ouro); }
+
+/* Wordmark gigante (inspiração footer-section-5 do 21st). */
+.v2ft__marca {
+  margin: clamp(50px, 8vw, 110px) 0 clamp(20px, 3vw, 40px);
+  font-family: var(--v2-display), serif; font-style: italic; font-weight: 500;
+  font-size: clamp(90px, 26vw, 420px); line-height: 0.8; letter-spacing: -0.02em;
+  background: linear-gradient(115deg, #ffe08a, #f5b642, #e6892f, #f5b642, #ffe08a);
+  background-size: 220% auto;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+  animation: v2brilho 7s linear infinite;
+}
+.v2ft__base {
+  display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  margin-top: clamp(50px, 7vw, 90px);
+  border-top: 1px solid var(--linha); padding-top: 22px;
+  font-size: 12px; letter-spacing: 0.03em; color: var(--tinta-fraca);
+}
+
+/* ---------- responsivo ---------- */
+@media (max-width: 900px) {
+  .v2nav__links { display: none; }
+  .v2h { grid-template-columns: 1fr; }
+  .v2h__mid { min-height: 52vh; order: -1; }
+  .v2h__acoes .v2btn { animation: none; }
+  .v2sobre__grade, .v2dep__grade { grid-template-columns: 1fr; }
+  .v2serv__grade { grid-template-columns: 1fr; }
+  /* Sem sticky-reveal no celular: rodapé normal, sem altura fixa. */
+  .v2ft { height: auto; clip-path: none; }
+  .v2ft__fix { position: static; height: auto; }
+  .v2ft__sticky { position: static; top: auto; height: auto; overflow: visible; }
+  .v2ft__topo { grid-template-columns: 1fr; gap: 44px; }
+  .v2linha { grid-template-columns: 40px 1fr 30px; gap: 10px 16px; }
+  .v2linha p { grid-column: 2 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2 * { animation: none !important; }
+}

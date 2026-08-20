@@ -13,26 +13,29 @@
    ============================================================ */
 
 :root {
-  --fundo: #ffffff;
-  --fundo-alt: #f2f1ed;
-  --fundo-forte: #101012;
-  --tinta: #101012;
-  --texto-fraco: rgba(16, 16, 18, 0.64);
+  /* Marca da Íntegra: amarela. Papel creme quente (suave, editorial), tinta
+     quase-preta morna, amarelo como bloco/grifo — nunca como texto sobre claro,
+     que não passa contraste. Blocos escuros mornos para o amarelo saltar. */
+  --fundo: #f5f2ea;
+  --fundo-alt: #ece7db;
+  --fundo-forte: #16150f;
+  --tinta: #1a1913;
+  --texto-fraco: rgba(26, 25, 19, 0.62);
   --amarelo: #ffd400;
   --amarelo-fundo: #ffd400;
-  --linha: rgba(16, 16, 18, 0.14);
-  --linha-forte: rgba(16, 16, 18, 0.3);
+  --linha: rgba(26, 25, 19, 0.14);
+  --linha-forte: rgba(26, 25, 19, 0.3);
   --curva: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Um bloco escuro no meio de uma página clara só funciona se ele redefinir os
    tokens: assim todo componente lá dentro continua usando os mesmos nomes. */
 .bloco-escuro {
-  --fundo: #101012;
-  --tinta: #f7f7f5;
-  --texto-fraco: rgba(247, 247, 245, 0.66);
-  --linha: rgba(247, 247, 245, 0.16);
-  --linha-forte: rgba(247, 247, 245, 0.32);
+  --fundo: #16150f;
+  --tinta: #f7f5ee;
+  --texto-fraco: rgba(247, 245, 238, 0.68);
+  --linha: rgba(247, 245, 238, 0.16);
+  --linha-forte: rgba(247, 245, 238, 0.32);
   color: var(--tinta);
 }
 
@@ -43,33 +46,6 @@
 html {
   scroll-behavior: smooth;
   background: var(--fundo);
-}
-
-/* Cursor da marca: bolinha amarela com contorno preto. É o cursor nativo
-   trocado por imagem, não um ponto que persegue o mouse com JavaScript, então
-   não tem atraso nem custo de quadro. O ponto quente fica no centro. */
-html,
-body {
-  cursor:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='30'%3E%3Cpath d='M5 3 L5 24 L10.4 18.9 L13.9 26.4 L17.6 24.7 L14.2 17.4 L21.3 17.1 Z' fill='%23ffd400' stroke='%23101012' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E")
-      4 3,
-    auto;
-}
-/* Sobre coisa clicável a seta inverte: mesma forma, cores trocadas. */
-a,
-button,
-label,
-select,
-summary,
-[role="tab"] {
-  cursor:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='30'%3E%3Cpath d='M5 3 L5 24 L10.4 18.9 L13.9 26.4 L17.6 24.7 L14.2 17.4 L21.3 17.1 Z' fill='%23101012' stroke='%23ffd400' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E")
-      4 3,
-    pointer;
-}
-input,
-textarea {
-  cursor: text;
 }
 
 body {
@@ -94,23 +70,24 @@ button {
 h1,
 h2,
 h3 {
-  font-family: var(--fonte-display), system-ui, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.045em;
+  font-family: var(--fonte-display), Georgia, serif;
+  font-weight: 500;
+  /* Serifa pede tracking quase neutro; o negativo forte era coisa da grotesca. */
+  letter-spacing: -0.012em;
   margin: 0;
 }
 
-/* Marca-texto: a assinatura da página. A palavra grifada é a única coisa
-   amarela dentro de um texto, e o grifo fica atrás dela, como quem passou a
-   caneta por cima do papel. */
+/* Destaque: a palavra em foco vira itálico da serifa — o gesto editorial da
+   Collin — com um grifo sálvia suave por trás, como caneta passada no papel. */
 em {
   position: relative;
   display: inline-block;
-  font-style: normal;
+  font-family: var(--fonte-display), Georgia, serif;
+  font-style: italic;
   font-weight: inherit;
   color: inherit;
   isolation: isolate;
-  padding: 0 0.12em 0.06em;
+  padding: 0 0.1em 0.04em;
   line-height: 1.14;
 }
 em::before {
@@ -119,10 +96,11 @@ em::before {
   z-index: -1;
   left: 0;
   right: 0;
-  top: 0.16em;
-  bottom: 0.12em;
+  top: 0.2em;
+  bottom: 0.1em;
   background: var(--amarelo);
-  transform: skewX(-3deg);
+  border-radius: 2px;
+  transform: skewX(-2deg);
 }
 
 /* Sem JavaScript o grifo já nasce pintado. A classe entra no <html> pelo
@@ -220,11 +198,11 @@ em::before {
   transition:
     transform 0.35s var(--curva),
     box-shadow 0.35s var(--curva);
-  box-shadow: 0 14px 30px -18px rgba(16, 16, 18, 0.9);
+  box-shadow: 0 14px 30px -18px rgba(26, 25, 19, 0.6);
 }
 .botao:hover {
   transform: translateY(-2px);
-  box-shadow: 0 22px 40px -20px rgba(16, 16, 18, 0.9);
+  box-shadow: 0 22px 40px -20px rgba(26, 25, 19, 0.6);
 }
 .botao:active {
   transform: translateY(0) scale(0.985);
