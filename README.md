@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Íntegra Consultoria de Marketing — Site
 
-## Getting Started
+Site institucional da **Íntegra Consultoria de Marketing**: manifesto, serviços, método, portfólio, planos, depoimentos e formulário de contato.
 
-First, run the development server:
+**Produção:** https://integra-puce.vercel.app
+
+## Stack
+
+- [Next.js 16](https://nextjs.org) (App Router) + React 19 + TypeScript
+- Tailwind CSS 4 + CSS por seção (`src/components/*.css`)
+- GSAP, Framer Motion e Lenis
+- `next-themes` (tema claro/escuro)
+
+## Como rodar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build
+npm run start
+npm run lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sem variáveis de ambiente.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Rotas
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Rota  | Descrição |
+|-------|-----------|
+| `/`   | Versão principal do site |
+| `/v2` | Variação de layout (layout e CSS próprios em `src/app/v2`) |
 
-## Learn More
+## Estrutura
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+  app/                 layout, home e versão /v2
+  components/          Hero, Manifesto, Servicos, Metodo, Portfolio, Planos,
+                       Depoimentos, CtaFinal, ModalContato, Flutuante, Nav
+  lib/contato.ts       montagem da mensagem/link de contato
+  lib/utils.ts         helper `cn`
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deploy
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Vercel — cada push na `main` publica automaticamente.
